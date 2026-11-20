@@ -1,0 +1,19 @@
+{
+  "name": "Prisgjett – gjett prisen",
+  "short_name": "Prisgjett",
+  "description": "Gjett prisen på ekte varer fra norske nettbutikker. Nærmest vinner.",
+  "lang": "nb",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#d9b3ff",
+  "theme_color": "#8f72ff",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "ikoner/ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "ikoner/ikon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "ikoner/ikon-maskerbar-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "ikoner/ikon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
