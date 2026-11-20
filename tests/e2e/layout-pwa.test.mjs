@@ -82,3 +82,37 @@ test('appen laster det ekte datasettet uten feil', async () => {
   assert.ok(await page.locator('[data-act=kategori]').count() >= 30);
   assert.deepEqual(page.errors, []);
 });
+
+test('skarpe bilder: media.pji.nu får srcset, forstørr-knappen åpner fullskjerm', async () => {
+  const page = await newPage(base, { device: devices['iPhone 13'] });
+  await leggTil(page, 'Kari');
+  await page.click('[data-act=start]');
+  await page.waitForSelector('.galleri img');
+  const [cdn, media] = await page.$$eval('.galleri .spor img', l => l.map(i => ({ src: i.getAttribute('src'), srcset: i.srcset, sizes: i.sizes })));
+  assert.equal(cdn.srcset, '', 'cdn-bilder finnes bare i én størrelse');
+  assert.match(media.src, /media\.pji\.nu\/\d+-b\.webp\?width=800&height=800$/);
+  assert.match(media.srcset, /\?width=1600&height=1600 1600w/);
+  assert.match(media.sizes, /100vw/);
+  await page.click('.galleri .forstorr');
+  await page.waitForSelector('#lysboks[open] .spor img');
+  assert.deepEqual(await page.$$eval('#lysboks .spor img', l => l.map(i => i.sizes)), ['', '100vw'], 'fullskjerm velger største bilde');
+  assert.equal(await page.locator('#lysboks .forstorr').count(), 0);
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#lysboks:not([open])', { state: 'attached' });
+  assert.deepEqual(page.errors, []);
+});
+
+for (const [navn, device] of [['iPhone 13', devices['iPhone 13']], ['iPad liggende', devices['iPad Pro 11 landscape']]]) {
+  test(`${navn}: produktbildet får plass i ruten og kuttes ikke`, async () => {
+    const page = await newPage(base, { device });
+    await leggTil(page, 'Kari');
+    await page.click('[data-act=start]');
+    await page.waitForSelector('.galleri img');
+    await page.waitForFunction(() => document.querySelector('.spor img').complete);
+    const r = await page.$eval('.spor figure', f => {
+      const fr = f.getBoundingClientRect(), ir = f.querySelector('img').getBoundingClientRect();
+      return { inni: ir.top >= fr.top - 0.5 && ir.bottom <= fr.bottom + 0.5 && ir.left >= fr.left - 0.5 && ir.right <= fr.right + 0.5, ir: [ir.width, ir.height], fr: [fr.width, fr.height] };
+    });
+    assert.ok(r.inni, `bildet går utenfor ruten: ${JSON.stringify(r)}`);
+  });
+}

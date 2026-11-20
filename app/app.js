@@ -43,6 +43,7 @@
     oye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
     lukketOye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10.9 10.9 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
     merke: '<svg viewBox="0 0 64 64" class="merke-stor" aria-hidden="true"><use href="#ikon-merke"/></svg>',
+    forstorr: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>',
   };
 
   // ---------- Tilstand ----------
@@ -534,7 +535,7 @@
   function rundeLinje(r, i) {
     const v = r.gjett.filter(g => g.vinner).map(g => g.navn);
     return `<li class="h-runde">
-      ${r.bilde ? `<img src="${esc(r.bilde)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span></span>'}
+      ${r.bilde ? `<img ${bildeKilde(r.bilde, '60px')} alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span></span>'}
       <div><strong>${i + 1}. ${esc(r.navn)}</strong>
         <p><span class="tall">${kr(r.totalpris)}</span>${r.butikk ? ' hos ' + esc(r.butikk) : ''}${v.length ? ' · Nærmest: ' + esc(v.join(', ')) : ''}</p>
         <p>${r.gjett.map(g => `${esc(g.navn)} ${kr(g.tall)}`).join(' · ')}</p></div></li>`;
@@ -574,12 +575,23 @@
   }
 
   // ---------- Galleri ----------
-  function galleriHTML(bilder, navn, kategori) {
+  // media.pji.nu leverer bildet i den størrelsen vi ber om (aldri større enn originalen),
+  // så nettleseren kan velge en skarp utgave for skjermen. cdn.pji.nu-bilder finnes bare i én størrelse.
+  const BREDDER = [240, 480, 800, 1200, 1600, 2000];
+  const GALLERI_SIZES = '(min-width: 1100px) 620px, (min-width: 900px) and (orientation: landscape) 56vw, 100vw';
+  function bildeKilde(u, sizes) {
+    if (!/^https:\/\/media\.pji\.nu\//.test(u)) return `src="${esc(u)}"`;
+    const base = esc(u.split('?')[0]);
+    return `src="${base}?width=800&amp;height=800" srcset="${BREDDER.map(w => `${base}?width=${w}&amp;height=${w} ${w}w`).join(', ')}" sizes="${sizes}"`;
+  }
+
+  function galleriHTML(bilder, navn, kategori, sizes = GALLERI_SIZES) {
     const merke = kategori ? `<span class="kategori-merke">${esc(kategori)}</span>` : '';
     if (!bilder.length) return `<div class="galleri"><div class="spor"><figure><span style="color:#777">Ingen bilder</span></figure></div>${merke}</div>`;
     const flere = bilder.length > 1;
     return `<div class="galleri" data-galleri>
-      <div class="spor">${bilder.map((b, i) => `<figure><img src="${esc(b)}" alt="${esc(navn)} – bilde ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async" referrerpolicy="no-referrer" data-act="lysboks" data-i="${i}"></figure>`).join('')}</div>
+      <div class="spor">${bilder.map((b, i) => `<figure><img ${bildeKilde(b, sizes)} data-u="${esc(b)}" alt="${esc(navn)} – bilde ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async" referrerpolicy="no-referrer" data-act="lysboks" data-i="${i}"></figure>`).join('')}</div>
+      <button class="forstorr" data-act="forstorr" aria-label="Vis bildene i full størrelse">${IKON.forstorr}</button>
       ${flere ? `<button class="pil v" data-act="bilde" data-d="-1" aria-label="Forrige bilde" hidden>${IKON.v}</button>
         <button class="pil h" data-act="bilde" data-d="1" aria-label="Neste bilde">${IKON.h}</button>
         <div class="prikker">${bilder.map((_, i) => `<i class="${i ? '' : 'aktiv'}"></i>`).join('')}</div>
@@ -614,11 +626,11 @@
 
   function aapneLysboks(img) {
     const g = img.closest('[data-galleri]');
-    const bilder = $$('img', g).map(i => i.getAttribute('src'));
+    const bilder = $$('img', g).map(i => i.dataset.u);
     const i = $$('img', g).indexOf(img);
-    $('#lysboks-innhold').innerHTML = galleriHTML(bilder, img.alt.replace(/ – bilde \d+$/, ''));
+    $('#lysboks-innhold').innerHTML = galleriHTML(bilder, img.alt.replace(/ – bilde \d+$/, ''), null, '100vw');
     const ny = $('#lysboks-innhold [data-galleri]');
-    if (ny) { kobleGalleri(ny); $$('img', ny).forEach(x => { x.removeAttribute('data-act'); x.removeAttribute('loading'); }); }
+    if (ny) { kobleGalleri(ny); $$('img', ny).forEach(x => { x.removeAttribute('data-act'); x.removeAttribute('loading'); }); $('.forstorr', ny)?.remove(); }
     $('#lysboks').showModal();
     const spor = $('#lysboks .spor');
     if (spor) { spor.style.scrollBehavior = 'auto'; spor.scrollLeft = i * spor.clientWidth; spor.style.scrollBehavior = ''; }
@@ -681,6 +693,11 @@
     fane: el => { history.replaceState(null, '', '#/statistikk' + (el.dataset.fane === 'historikk' ? '/historikk' : '')); visStatistikk(el.dataset.fane); },
     bilde: el => el.closest('[data-galleri]')._bla(+el.dataset.d),
     lysboks: el => aapneLysboks(el),
+    forstorr: el => {
+      const spor = $('.spor', el.closest('[data-galleri]'));
+      const imgs = $$('img', spor), i = Math.round(spor.scrollLeft / Math.max(1, spor.clientWidth));
+      if (imgs[i] || imgs[0]) aapneLysboks(imgs[i] || imgs[0]);
+    },
     'lukk-lysboks': () => $('#lysboks').close(),
     'lukk-ios-hint': el => { lager.sett('ios-hint-lukket', true); el.closest('.melding').remove(); },
   };

@@ -68,6 +68,13 @@ class Navn(unittest.TestCase):
         self.assertEqual(res["kategori"], "hodetelefoner")
 
 
+def side(nyttelast_obj, ekstra_html=""):
+    """Lager en produktside slik Prisjakt leverer den: Next.js-data i self.__next_f.push."""
+    nyttelast = json.dumps(nyttelast_obj, separators=(",", ":"))  # kompakt som hos Prisjakt
+    return ('<meta property="og:title" content="Testvare 3000 - Prisjakt">'
+            '<script>self.__next_f.push([1,%s])</script>' % json.dumps(nyttelast)) + ekstra_html
+
+
 class HentProdukt(unittest.TestCase):
     def setUp(self):
         self._get = prisjakt._get
@@ -75,23 +82,35 @@ class HentProdukt(unittest.TestCase):
     def tearDown(self):
         prisjakt._get = self._get
 
-    def test_bilder_uten_logoer_og_riktig_totalpris(self):
-        nyttelast = json.dumps({"offerRows": [tilbud(2000, frakt=49)]}, separators=(",", ":"))  # kompakt som hos Prisjakt
-        html = (
-            '<meta property="og:title" content="Testvare 3000 - Prisjakt">'
-            '<script>self.__next_f.push([1,%s])</script>'
-            '<img src="https://cdn.pji.nu/product/front/280/123.jpg">'
-            '<img src="https://media.pji.nu/abc-def.webp">'
-            '<img src="https://cdn.pji.nu/g/ftg_logos/sizes/176/1/16091.png">'
-            '<img src="https://cdn.pji.nu/g/webapp/app_store/no.png">'
-        ) % json.dumps(nyttelast)
+    def test_bare_produktets_eget_galleri(self):
+        # Siden har også bilder av andre varianter og andre produkter – de skal ikke med
+        html = side({
+            "offerRows": [tilbud(2000, frakt=49)],
+            "variants": [{"image": "https://media.pji.nu/annen-farge.webp"}],
+            "galleri": {"productName": "Testvare 3000", "imageUrls": [
+                {"url": "https://media.pji.nu/detalj.webp?width=800&height=800", "isPrimaryImage": False},
+                {"url": "https://cdn.pji.nu/product/standard/800/123.jpg", "isPrimaryImage": True},
+                {"url": "https://cdn.pji.nu/g/ftg_logos/sizes/176/1/16091.png", "isPrimaryImage": False},
+                {"url": "https://media.pji.nu/detalj.webp", "isPrimaryImage": False},
+            ]},
+            "lignende": [{"imageUrl": "https://media.pji.nu/annet-produkt.webp"}],
+        }, '<img src="https://cdn.pji.nu/g/webapp/app_store/no.png">')
         prisjakt._get = lambda url, ttl=600: html
         p = prisjakt.hent_produkt(123)
         self.assertEqual(p["navn"], "Testvare 3000")
-        self.assertEqual(p["bilder"], ["https://cdn.pji.nu/product/front/800/123.jpg", "https://media.pji.nu/abc-def.webp"])
+        # hovedbildet først, uten logoer, uten størrelsesparametere, uten dubletter
+        self.assertEqual(p["bilder"], ["https://cdn.pji.nu/product/standard/800/123.jpg", "https://media.pji.nu/detalj.webp"])
         self.assertEqual(p["totalpris"], 2049)
         self.assertTrue(p["inkl_mva"])
         self.assertRegex(p["hentet"], r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d[+-]\d\d:\d\d$")
+
+    def test_reserve_uten_galleri_tar_bare_egne_bilder(self):
+        html = side({"offerRows": [tilbud(2000)]},
+                    '<img src="https://cdn.pji.nu/product/front/280/123.jpg">'
+                    '<img src="https://cdn.pji.nu/product/standard/280/999.jpg">'
+                    '<img src="https://media.pji.nu/annet-produkt.webp">')
+        prisjakt._get = lambda url, ttl=600: html
+        self.assertEqual(prisjakt.hent_produkt(123)["bilder"], ["https://cdn.pji.nu/product/front/800/123.jpg"])
 
 
 if __name__ == "__main__":

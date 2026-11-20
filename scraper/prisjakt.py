@@ -18,12 +18,17 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 
 GRUPPER = {
-    "Elektronikk": {
-        "mobiltelefoner": "Mobiltelefoner", "tv": "TV", "hodetelefoner": "Hodetelefoner",
-        "smartklokker": "Smartklokker", "nettbrett": "Nettbrett", "spillkonsoller": "Spillkonsoller",
-        "pc-skjermer": "PC-skjermer", "projektorer": "Projektorer", "droner": "Droner",
-        "vr-briller": "VR-briller", "mikrofoner": "Mikrofoner", "platespillere": "Platespillere",
-        "3d-printere": "3D-printere", "gamingstoler": "Gamingstoler",
+    "Skjønnhet og hudpleie": {
+        "parfymer": "Parfyme", "ansiktskrem": "Ansiktskrem", "ansiktsserum": "Ansiktsserum",
+        "renseprodukter-for-ansikt": "Ansiktsrens", "mascara": "Mascara", "foundation": "Foundation",
+        "leppestift": "Leppestift", "neglelakk": "Neglelakk", "solkrem": "Solkrem",
+        "bodylotion": "Bodylotion", "harkurer": "Hårkur",
+    },
+    "Mote og tilbehør": {
+        "handvesker-og-skuldervesker": "Vesker", "smykker": "Smykker", "kjoler": "Kjoler",
+        "boots-skoletter-stovletter": "Boots og skoletter", "sko-med-hael": "Sko med hæl",
+        "sandaler": "Sandaler", "lommeboker-og-kortholdere": "Lommebøker", "weekendbag-treningsbag": "Weekendbager",
+        "pysjamas": "Pysjamas", "morgenkaper": "Morgenkåper",
     },
     "Hjem og kjøkken": {
         "robotstovsugere": "Robotstøvsugere", "stovsugere": "Støvsugere", "kaffetraktere": "Kaffetraktere",
@@ -31,7 +36,12 @@ GRUPPER = {
         "oppvaskmaskiner": "Oppvaskmaskiner", "torketromler": "Tørketromler",
         "mikrobolgeovner": "Mikrobølgeovner", "komfyrer": "Komfyrer", "kjokkenmaskiner": "Kjøkkenmaskiner",
         "vannkokere": "Vannkokere", "luftrensere": "Luftrensere", "varmeovner": "Varmeovner",
-        "skrivebord": "Skrivebord",
+        "skrivebord": "Skrivebord", "airfryers-og-frityrgryter": "Airfryere", "iskremmaskiner": "Iskremmaskiner",
+    },
+    "Interiør og hobby": {
+        "stearinlys-og-duftlys": "Duftlys", "vaser": "Vaser", "lysestaker-og-lyslykter": "Lysestaker og lyslykter",
+        "bordlamper": "Bordlamper", "sengetoy": "Sengetøy", "puter": "Puter", "symaskiner": "Symaskiner",
+        "trad-og-garn": "Garn", "yoga-tilbehor": "Yogautstyr",
     },
     "Sport og friluft": {
         "elsykler": "Elsykler", "lopesko": "Løpesko", "sykkelhjelmer": "Sykkelhjelmer",
@@ -175,6 +185,38 @@ def _beste_tilbud(rader):
     return kandidater[min(len(kandidater) - 1, len(kandidater) // 3)]
 
 
+_GALLERI = re.compile(r'"productName":("(?:[^"\\]|\\.)*"),"imageUrls":')
+
+
+def _galleri(data, pid, html=""):
+    """Produktets eget bildegalleri, slik Prisjakt viser det øverst på produktsiden:
+    "productName":"…","imageUrls":[{"url":…,"isPrimaryImage":…}].
+    Resten av siden har bilder av andre varianter (farger) og andre produkter, så de brukes ikke.
+    Bilder fra media.pji.nu lagres uten størrelsesparametere; appen ber om riktig størrelse selv."""
+    for m in _GALLERI.finditer(data):
+        try:
+            liste, _ = json.JSONDecoder().raw_decode(data, m.end())
+        except ValueError:
+            continue
+        if not isinstance(liste, list):
+            continue
+        liste = sorted((x for x in liste if isinstance(x, dict)), key=lambda x: not x.get("isPrimaryImage"))
+        urls = []
+        for x in liste:
+            u = x.get("url")
+            if not isinstance(u, str) or not re.match(r"https://(?:media|cdn)\.pji\.nu/", u) or "/g/" in u:
+                continue  # /g/ er butikklogoer og App Store-/Google Play-merker
+            if "media.pji.nu" in u:
+                u = u.split("?")[0]
+            if u not in urls:
+                urls.append(u)
+        if urls:
+            return urls
+    # Reserve hvis siden endrer form: bare produktets egne standardbilder (samme produkt-id)
+    funnet = re.findall(r"https://cdn\.pji\.nu/product/(standard|front|back|right|left)/\d+/%d\.jpg" % pid, html + data)
+    return list(dict.fromkeys("https://cdn.pji.nu/product/%s/800/%d.jpg" % (v, pid) for v in funnet))
+
+
 def hent_produkt(pid):
     html = _get("%s/product.php?p=%d" % (BASE, pid), ttl=120)
     data = _payload(html)
@@ -190,18 +232,7 @@ def hent_produkt(pid):
     m = re.search(r'<meta property="og:title" content="([^"]+)"', html)
     if m:
         navn = _html.unescape(re.sub(r"\s*[-|–]\s*(Prisjakt|Sammenlign).*$", "", m.group(1)).strip())
-    bilder = []
-    for u in re.findall(r'https://(?:media|cdn)\.pji\.nu/[^"\\ ]+?\.(?:jpg|png|webp)', html + data):
-        if "/product/" in u:
-            if "/standard/800/" not in u and "/front/" not in u and "/back/" not in u \
-                    and "/right/" not in u and "/left/" not in u:
-                continue
-            u = re.sub(r"/(standard|front|back|right|left)/\d+/", r"/\1/800/", u)
-        elif "/g/" in u:
-            continue  # butikklogoer og App Store-/Google Play-merker, ikke produktbilder
-        if u not in bilder:
-            bilder.append(u)
-    bilder = bilder[:8]
+    bilder = _galleri(data, pid, html)
     if not bilder:
         return None
     nu = datetime.now(timezone.utc).astimezone()
