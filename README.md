@@ -25,9 +25,9 @@ Under hvert produkt står de samme vilkårene som på PC: butikk, inkl. 25 % mva
 - **Bare produktets eget galleri.** Bildene hentes fra galleriet øverst på Prisjakt-siden (`imageUrls`), ikke fra resten av siden, der det også ligger bilder av andre farger og andre produkter.
 - **Skarpe bilder.** Bilder fra `media.pji.nu` hentes i den størrelsen skjermen trenger (240–2000 px), og fullskjerm (forstørr-knappen eller trykk på bildet) får den største. Bilder fra `cdn.pji.nu` finnes bare i én størrelse (maks 800 px).
 - **Bildefilter** (`scraper/bildefilter.py`). En bildemodell (SigLIP2, kjører lokalt og gratis) fjerner reklame, infografikk, sammenligningstabeller, måltegninger, utmerkelser og app-logoer. Doble bilder og bilder under 400 px fjernes også. Hver vare beholder alltid minst ett bilde.
-  - Mot 245 håndmerkede bilder: fanget 18 av 21 dårlige, fjernet 0 av 213 gode.
-  - Mot 150 nye bilder: fanget 14 av 20 dårlige, fjernet 1 av ca. 127 gode.
-  - Det som slipper gjennom er mest reklamebilder der produktet også vises tydelig.
+  - Målt mot 442 håndmerkede bilder fra 92 varer: fanget 42 av 53 dårlige (79 %), fjernet 4 av 369 gode (1 %). Beskrivelsene er delvis justert mot de samme bildene, så tallene er litt optimistiske.
+  - Det som slipper gjennom er mest mørke reklamebilder med liten tekst der produktet også vises. De gode som forsvinner er oftest esker med mye trykk (LEGO, brettspill).
+  - Sammenlignet med ViT-B-32, ViT-L-14 og en variant med produktnavnet som beskrivelse. Alle var dårligere.
 
 ## Mobil/nettbrett sammenlignet med PC-versjonen
 | | PC-versjonen | Mobil og nettbrett |

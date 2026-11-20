@@ -19,7 +19,7 @@ except ImportError:  # Pillow følger med bildefilter-pakkene; prishentingen ska
 MODELL = ("ViT-B-16-SigLIP2-256", "webli")
 MIN_SIDE = 400          # lengste side i piksler; mindre bilder er for uskarpe på mobil
 MARGIN = -0.02          # fjern når beste «dårlig»-treff er minst så nær beste «godt» treff.
-                        # Målt mot 245 håndmerkede bilder: fanget 18 av 21 dårlige, fjernet 0 av 213 gode.
+                        # Se README for målingene mot håndmerkede bilder.
 DUBLETT = 0.98          # bildelikhet (cosinus) som regnes som samme bilde (fargevarianter ligger lavere)
 MAKS_BILDER = 8
 
@@ -70,7 +70,6 @@ DARLIG = [
     "a collage of colorful logos of streaming apps like Netflix and YouTube",
     "a list of product features with small icons and text",
     "a spec sheet with technical specifications",
-    "a product image with a text caption about what is included in the box",
     "an image with several lines of small text",
     "a line drawing of a product with arrows and numbers showing its size in cm",
 ]
@@ -103,13 +102,16 @@ class Bildefilter:
     def aktiv(self):
         return self.modell is not None
 
+    def _kod(self, setninger):
+        with self.torch.no_grad():
+            t = self.modell.encode_text(self.tok(setninger))
+        return t / t.norm(dim=-1, keepdim=True)
+
     def _tekstfunksjoner(self, kategori):
+        """Beskrivelsene som vektorer, (GOD, DARLIG), for én kategori."""
         if kategori not in self._tekst:
             k = KATEGORI_EN.get(kategori, "a product")
-            setninger = [s.format(k=k) for s in GOD + DARLIG]
-            with self.torch.no_grad():
-                t = self.modell.encode_text(self.tok(setninger))
-            self._tekst[kategori] = t / t.norm(dim=-1, keepdim=True)
+            self._tekst[kategori] = (self._kod([s.format(k=k) for s in GOD]), self._kod([s.format(k=k) for s in DARLIG]))
         return self._tekst[kategori]
 
     def vurder(self, bilder, kategori):
@@ -120,10 +122,10 @@ class Bildefilter:
         with self.torch.no_grad():
             f = self.modell.encode_image(self.torch.stack([self.prep(b) for b in bilder]))
             f = f / f.norm(dim=-1, keepdim=True)
-            lik = f @ self._tekstfunksjoner(kategori).T
-        ng = len(GOD)
-        margin = (lik[:, ng:].max(dim=1).values - lik[:, :ng].max(dim=1).values).tolist()
-        hvilken = [DARLIG[i].format(k="…") for i in lik[:, ng:].argmax(dim=1).tolist()]
+            god, darlig = self._tekstfunksjoner(kategori)
+            lik_god, lik_darlig = f @ god.T, f @ darlig.T
+        margin = (lik_darlig.max(dim=1).values - lik_god.max(dim=1).values).tolist()
+        hvilken = [DARLIG[i].format(k="…") for i in lik_darlig.argmax(dim=1).tolist()]
         return margin, hvilken, f
 
     def rydd(self, urls, kategori, hent):
