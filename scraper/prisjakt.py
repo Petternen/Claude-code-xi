@@ -21,9 +21,19 @@ GRUPPER = {
     "Elektronikk": {
         "mobiltelefoner": "Mobiltelefoner", "tv": "TV", "hodetelefoner": "Hodetelefoner",
         "smartklokker": "Smartklokker", "nettbrett": "Nettbrett", "spillkonsoller": "Spillkonsoller",
-        "pc-skjermer": "PC-skjermer", "projektorer": "Projektorer", "droner": "Droner",
-        "vr-briller": "VR-briller", "mikrofoner": "Mikrofoner", "platespillere": "Platespillere",
-        "3d-printere": "3D-printere", "gamingstoler": "Gamingstoler",
+        "pc-skjermer": "PC-skjermer", "projektorer": "Projektorer", "platespillere": "Platespillere",
+    },
+    "Skjønnhet og hudpleie": {
+        "parfymer": "Parfyme", "ansiktskrem": "Ansiktskrem", "ansiktsserum": "Ansiktsserum",
+        "renseprodukter-for-ansikt": "Ansiktsrens", "mascara": "Mascara", "foundation": "Foundation",
+        "leppestift": "Leppestift", "neglelakk": "Neglelakk", "solkrem": "Solkrem",
+        "bodylotion": "Bodylotion", "harkurer": "Hårkur",
+    },
+    "Mote og tilbehør": {
+        "handvesker-og-skuldervesker": "Vesker", "smykker": "Smykker", "kjoler": "Kjoler",
+        "boots-skoletter-stovletter": "Boots og skoletter", "sko-med-hael": "Sko med hæl",
+        "sandaler": "Sandaler", "lommeboker-og-kortholdere": "Lommebøker", "weekendbag-treningsbag": "Weekendbager",
+        "pysjamas": "Pysjamas", "morgenkaper": "Morgenkåper",
     },
     "Hjem og kjøkken": {
         "robotstovsugere": "Robotstøvsugere", "stovsugere": "Støvsugere", "kaffetraktere": "Kaffetraktere",
@@ -31,7 +41,12 @@ GRUPPER = {
         "oppvaskmaskiner": "Oppvaskmaskiner", "torketromler": "Tørketromler",
         "mikrobolgeovner": "Mikrobølgeovner", "komfyrer": "Komfyrer", "kjokkenmaskiner": "Kjøkkenmaskiner",
         "vannkokere": "Vannkokere", "luftrensere": "Luftrensere", "varmeovner": "Varmeovner",
-        "skrivebord": "Skrivebord",
+        "skrivebord": "Skrivebord", "airfryers-og-frityrgryter": "Airfryere", "iskremmaskiner": "Iskremmaskiner",
+    },
+    "Interiør og hobby": {
+        "stearinlys-og-duftlys": "Duftlys", "vaser": "Vaser", "lysestaker-og-lyslykter": "Lysestaker og lyslykter",
+        "bordlamper": "Bordlamper", "sengetoy": "Sengetøy", "puter": "Puter", "symaskiner": "Symaskiner",
+        "trad-og-garn": "Garn", "yoga-tilbehor": "Yogautstyr",
     },
     "Sport og friluft": {
         "elsykler": "Elsykler", "lopesko": "Løpesko", "sykkelhjelmer": "Sykkelhjelmer",

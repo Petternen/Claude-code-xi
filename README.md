@@ -14,7 +14,8 @@ Etter første åpning virker appen også uten nett. Da brukes prisene den hentet
 
 ## Slik spiller dere
 1. **Hvem spiller?** Skriv navn og trykk `Enter`. Faste spillere huskes på enheten. Huk av **Gjest** for folk som ikke skal med i topplisten.
-2. Velg **kategorier** (44 i 5 grupper) og **antall runder** (standard 1, kan utvides underveis).
+2. Velg **kategorier** (71 i 8 grupper) og **antall runder** (standard 1, kan utvides underveis).
+   Gruppene er Elektronikk, Skjønnhet og hudpleie, Mote og tilbehør, Hjem og kjøkken, Interiør og hobby, Sport og friluft, Hage, barn og fritid og Personlig pleie.
 3. Hver spiller skriver inn sitt gjett etter tur. Tallene er skjult som standard («Ikke la de andre se skjermen»). Øyet viser dem.
 4. **Vis riktig pris:** fasit, rangering, avvik i kroner og prosent. Den som er nærmest vinner runden. Er to like nær, deler de seieren.
 5. **Resultat:** flest rundeseire vinner spillet. Likt antall gir uavgjort.
@@ -32,7 +33,7 @@ Under hvert produkt står de samme vilkårene som på PC: butikk, inkl. 25 % mva
 ## Mobil/nettbrett sammenlignet med PC-versjonen
 | | PC-versjonen | Mobil og nettbrett |
 |---|---|---|
-| Priser | Hentes live fra Prisjakt for hver runde | Hentes fra Prisjakt hver morgen (436 varer), med tidspunkt per vare |
+| Priser | Hentes live fra Prisjakt for hver runde | Hentes fra Prisjakt hver morgen (ca. 700 varer), med tidspunkt per vare |
 | Utvalgsregler | Ny, på lager, ordinær pris, tilbud ⅓ opp fra billigste, inkl. frakt og mva | Samme |
 | Spillere | Faste brukere (felles database) + gjester | Faste spillere per enhet + gjester |
 | Statistikk | Toppliste og historikk på serveren | Toppliste og historikk på enheten |

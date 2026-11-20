@@ -39,6 +39,16 @@ KATEGORI_EN = {
     "solbriller": "sunglasses", "lommelykter": "a flashlight", "gressklippere": "a lawn mower",
     "barnevogner": "a baby stroller", "bilseter": "a child car seat", "brettspill": "a board game",
     "lego": "a LEGO set", "elektriske-tannborster": "an electric toothbrush", "barbermaskiner": "an electric shaver",
+    "parfymer": "a bottle of perfume", "ansiktskrem": "a jar of face cream", "ansiktsserum": "a bottle of face serum",
+    "renseprodukter-for-ansikt": "a facial cleanser", "mascara": "a mascara", "foundation": "a bottle of makeup foundation",
+    "leppestift": "a lipstick", "neglelakk": "a bottle of nail polish", "solkrem": "a bottle of sunscreen",
+    "bodylotion": "a bottle of body lotion", "harkurer": "a hair care product", "handvesker-og-skuldervesker": "a handbag",
+    "smykker": "a piece of jewelry", "kjoler": "a dress", "boots-skoletter-stovletter": "boots", "sko-med-hael": "high-heeled shoes",
+    "sandaler": "sandals", "lommeboker-og-kortholdere": "a wallet", "weekendbag-treningsbag": "a weekend bag",
+    "pysjamas": "pajamas", "morgenkaper": "a bathrobe", "airfryers-og-frityrgryter": "an air fryer",
+    "iskremmaskiner": "an ice cream maker", "stearinlys-og-duftlys": "a scented candle", "vaser": "a vase",
+    "lysestaker-og-lyslykter": "a candle holder", "bordlamper": "a table lamp", "sengetoy": "bed linen", "puter": "a cushion",
+    "symaskiner": "a sewing machine", "trad-og-garn": "yarn", "yoga-tilbehor": "yoga equipment",
 }
 
 GOD = [
