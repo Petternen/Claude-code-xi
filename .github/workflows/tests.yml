@@ -20,8 +20,10 @@ jobs:
           python-version: '3.13'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: Enhetstester (Prisjakt-henting)
-        run: npm run test:py
+      - name: Enhetstester (Prisjakt-henting og bilderydding)
+        run: |
+          pip install Pillow==12.3.0
+          npm run test:py
       - name: Nettlesertester (mobil, nettbrett, PC)
         run: npm run test:e2e
 

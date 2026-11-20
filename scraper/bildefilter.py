@@ -11,7 +11,10 @@ import io
 import sys
 import urllib.request
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:  # Pillow følger med bildefilter-pakkene; prishentingen skal virke uten
+    Image = None
 
 MODELL = ("ViT-B-16-SigLIP2-256", "webli")
 MIN_SIDE = 400          # lengste side i piksler; mindre bilder er for uskarpe på mobil
@@ -167,6 +170,8 @@ def analyse_url(url):
 
 
 def hent_bilde(url, ua, timeout=20):
+    if Image is None:
+        return None
     try:
         req = urllib.request.Request(analyse_url(url), headers={"User-Agent": ua})
         with urllib.request.urlopen(req, timeout=timeout) as r:

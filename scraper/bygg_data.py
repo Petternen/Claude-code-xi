@@ -57,6 +57,9 @@ def hent_kategori(slug, antall, forsok, pause):
 
 def rydd_bilder(produkter, trader=8):
     """Fjerner reklame, infografikk, tegninger, utmerkelser, dårlige og doble bilder fra galleriene."""
+    if bildefilter.Image is None:
+        logg("Bildefilter: Pillow mangler – bildene beholdes som de er.")
+        return
     start = time.time()
     filt = bildefilter.Bildefilter()
     for_, etter, grunner = 0, 0, {}
