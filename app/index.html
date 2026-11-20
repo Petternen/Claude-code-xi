@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prisgjett</title>
+<meta name="description" content="Gjett prisen på ekte varer fra norske nettbutikker. Nærmest vinner.">
+<meta name="theme-color" content="#8f72ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prisgjett">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="ikoner/ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikoner/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+<header class="topp">
+  <div class="hud">
+    <a class="logo" href="#/" aria-label="Prisgjett – til start">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ikon-merke"/></svg>
+      <span class="logo-tekst"><b>Pris</b><span>gjett</span></span>
+    </a>
+    <div class="topp-midt" id="topp-midt"></div>
+    <nav class="topp-knapper">
+      <button class="ikonknapp" id="installer" hidden aria-label="Installer appen" title="Installer appen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+      </button>
+      <a class="ikonknapp" href="#/statistikk" aria-label="Statistikk" title="Statistikk (T)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11m7 9V5m7 15v-6"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="skjerm" tabindex="-1"></main>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog class="lysboks" id="lysboks" aria-label="Bilder i full størrelse">
+  <button class="ikonknapp lukk" data-act="lukk-lysboks" aria-label="Lukk (Esc)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+  <div id="lysboks-innhold"></div>
+</dialog>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="merke-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9b7bff"/><stop offset=".6" stop-color="#e58bd8"/><stop offset="1" stop-color="#ffc77a"/>
+    </linearGradient>
+    <radialGradient id="merke-lapp" cx=".4" cy=".35" r=".8">
+      <stop offset="0" stop-color="#fff3a8"/><stop offset="1" stop-color="#ffb800"/>
+    </radialGradient>
+  </defs>
+  <symbol id="ikon-merke" viewBox="0 0 64 64">
+    <rect width="64" height="64" rx="16" fill="url(#merke-bg)"/>
+    <path d="M14 18a4 4 0 0 1 4-4h14.3a4 4 0 0 1 2.8 1.2l15.7 15.7a4 4 0 0 1 0 5.6L36.5 50.8a4 4 0 0 1-5.6 0L15.2 35.1A4 4 0 0 1 14 32.3z"
+          fill="url(#merke-lapp)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="22.5" cy="22.5" r="3.4" fill="#fff" stroke="#e59e00" stroke-width="1.5"/>
+    <text x="34" y="40.5" text-anchor="middle" font-family="Baloo 2, Arial Rounded MT Bold, Arial, sans-serif" font-weight="800" font-size="17" fill="#6b3d00" transform="rotate(45 34 35)">kr?</text>
+  </symbol>
+</svg>
+
+<script src="fx.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+name: Tester
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Enhetstester (Prisjakt-henting)
+        run: npm run test:py
+      - name: Nettlesertester (mobil, nettbrett, PC)
+        run: npm run test:e2e
+
+  prisjakt:
+    name: Prisjakt svarer fra GitHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      # Sjekker at den daglige hentingen vil virke. Feiler ikke bygget, men gir en advarsel.
+      - run: |
+          python3 scraper/bygg_data.py --kategorier tv,lego --per-kategori 2 --min-varer 2 --ut "$RUNNER_TEMP/test.json" \
+            || echo "::warning::Prisjakt svarte ikke som forventet fra GitHub Actions. Den daglige pris-oppdateringen kan feile."

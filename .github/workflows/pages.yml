@@ -1,0 +1,68 @@
+name: Publiser til GitHub Pages
+
+# Henter ferske priser fra Prisjakt og publiserer appen.
+# Kjører ved endringer på main, hver morgen, og manuelt fra Actions-fanen.
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', 'scraper/**', '.github/workflows/pages.yml']
+  schedule:
+    - cron: '17 4 * * *'   # 05:17 norsk vintertid / 06:17 sommertid
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      # Start fra det nyeste av datasettet i repoet og det som allerede er publisert,
+      # så en kategori som feiler i dag beholder gårsdagens varer.
+      - name: Hent publisert datasett som reserve
+        run: |
+          curl -fsSL "${{ steps.pages.outputs.base_url }}/data/produkter.json" -o "$RUNNER_TEMP/publisert.json" || exit 0
+          python3 - "$RUNNER_TEMP/publisert.json" app/data/produkter.json <<'PY'
+          import json, shutil, sys
+          pub, repo = sys.argv[1], sys.argv[2]
+          try:
+              a, b = json.load(open(pub)), json.load(open(repo))
+          except Exception as e:
+              print("Bruker datasettet i repoet:", e); sys.exit(0)
+          if a.get("generert", "") > b.get("generert", "") and len(a.get("produkter", [])) >= 100:
+              shutil.copy(pub, repo); print("Bruker publisert datasett fra", a["generert"])
+          else:
+              print("Bruker datasettet i repoet fra", b.get("generert"))
+          PY
+
+      - name: Hent ferske priser fra Prisjakt
+        id: hent
+        continue-on-error: true
+        run: python3 scraper/bygg_data.py --per-kategori 10 --trader 4
+
+      - name: Varsle hvis hentingen feilet
+        if: steps.hent.outcome == 'failure'
+        run: echo "::warning::Fikk ikke hentet ferske priser fra Prisjakt. Appen publiseres med forrige datasett."
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+      - id: deployment
+        uses: actions/deploy-pages@v4

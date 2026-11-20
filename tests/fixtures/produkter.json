@@ -1,0 +1,158 @@
+{
+ "versjon": 1,
+ "generert": "2099-01-01T06:00:00+00:00",
+ "kilde": "Prisjakt.no",
+ "regler": "test",
+ "grupper": {
+  "Elektronikk": {
+   "tv": "TV",
+   "hodetelefoner": "Hodetelefoner"
+  },
+  "Hjem og kjøkken": {
+   "kaffetraktere": "Kaffetraktere",
+   "tom": "Tom kategori"
+  }
+ },
+ "produkter": [
+  {
+   "id": 101,
+   "navn": "Test-TV 55\"",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/101.jpg",
+    "https://media.pji.nu/101-b.webp"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=101",
+   "tilbud": {
+    "butikk": "Elkjøp",
+    "pris": 9900,
+    "frakt": 100,
+    "fraktmetode": "Hjemlevering",
+    "transportor": "Posten",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Test-TV 55\" (butikkens navn)",
+    "url": "https://www.prisjakt.no/go-to-shop/101",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 10000,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "tv"
+  },
+  {
+   "id": 102,
+   "navn": "Test-TV 65\"",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/102.jpg",
+    "https://media.pji.nu/102-b.webp"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=102",
+   "tilbud": {
+    "butikk": "Power",
+    "pris": 14990,
+    "frakt": 0,
+    "fraktmetode": "",
+    "transportor": "",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Test-TV 65\" (butikkens navn)",
+    "url": "https://www.prisjakt.no/go-to-shop/102",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 14990,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "tv"
+  },
+  {
+   "id": 201,
+   "navn": "Testlyd X1",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/201.jpg",
+    "https://media.pji.nu/201-b.webp"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=201",
+   "tilbud": {
+    "butikk": "Komplett",
+    "pris": 1990,
+    "frakt": 10,
+    "fraktmetode": "Hjemlevering",
+    "transportor": "Posten",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Testlyd X1 (butikkens navn)",
+    "url": "https://www.prisjakt.no/go-to-shop/201",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 2000,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "hodetelefoner"
+  },
+  {
+   "id": 202,
+   "navn": "Testlyd X2",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/202.jpg",
+    "https://media.pji.nu/202-b.webp"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=202",
+   "tilbud": {
+    "butikk": "CDON",
+    "pris": 2990,
+    "frakt": 0,
+    "fraktmetode": "",
+    "transportor": "",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Testlyd X2 (butikkens navn)",
+    "url": "https://www.prisjakt.no/go-to-shop/202",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 2990,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "hodetelefoner"
+  },
+  {
+   "id": 301,
+   "navn": "Testkaffe 3000",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/301.jpg",
+    "https://media.pji.nu/301-b.webp"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=301",
+   "tilbud": {
+    "butikk": "Kjell",
+    "pris": 1000,
+    "frakt": 0,
+    "fraktmetode": "",
+    "transportor": "",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Testkaffe 3000 (butikkens navn)",
+    "url": "https://www.prisjakt.no/go-to-shop/301",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 1000,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "kaffetraktere"
+  }
+ ]
+}
