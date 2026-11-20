@@ -38,5 +38,5 @@ jobs:
           python-version: '3.13'
       # Sjekker at den daglige hentingen vil virke. Feiler ikke bygget, men gir en advarsel.
       - run: |
-          python3 scraper/bygg_data.py --kategorier tv,lego --per-kategori 2 --min-varer 2 --uten-bildefilter --ut "$RUNNER_TEMP/test.json" \
+          python3 scraper/bygg_data.py --kategorier parfymer,lego --per-kategori 2 --min-varer 2 --uten-bildefilter --ut "$RUNNER_TEMP/test.json" \
             || echo "::warning::Prisjakt svarte ikke som forventet fra GitHub Actions. Den daglige pris-oppdateringen kan feile."

@@ -18,11 +18,6 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 
 GRUPPER = {
-    "Elektronikk": {
-        "mobiltelefoner": "Mobiltelefoner", "tv": "TV", "hodetelefoner": "Hodetelefoner",
-        "smartklokker": "Smartklokker", "nettbrett": "Nettbrett", "spillkonsoller": "Spillkonsoller",
-        "pc-skjermer": "PC-skjermer", "projektorer": "Projektorer", "platespillere": "Platespillere",
-    },
     "Skjønnhet og hudpleie": {
         "parfymer": "Parfyme", "ansiktskrem": "Ansiktskrem", "ansiktsserum": "Ansiktsserum",
         "renseprodukter-for-ansikt": "Ansiktsrens", "mascara": "Mascara", "foundation": "Foundation",
