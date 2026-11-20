@@ -1,0 +1,7 @@
+# Bildefilteret (bildefilter.py). torch og torchvision installeres først fra PyTorch sin CPU-indeks,
+# ellers henter pip den store GPU-utgaven:
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0 torchvision==0.29.2
+#   pip install -r scraper/krav-bildefilter.txt
+open_clip_torch==4.2.2
+transformers==5.23.0
+sentencepiece==0.2.3

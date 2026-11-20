@@ -20,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bildefilter  # noqa: E402
 import prisjakt  # noqa: E402
 
 ROT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,6 +55,34 @@ def hent_kategori(slug, antall, forsok, pause):
     return slug, ut
 
 
+def rydd_bilder(produkter, trader=8):
+    """Fjerner reklame, infografikk, tegninger, utmerkelser, dårlige og doble bilder fra galleriene."""
+    start = time.time()
+    filt = bildefilter.Bildefilter()
+    for_, etter, grunner = 0, 0, {}
+    with ThreadPoolExecutor(max_workers=trader) as ex:
+        for i, p in enumerate(produkter):
+            urls = p["bilder"]
+            lastet = dict(zip(urls, ex.map(lambda u: bildefilter.hent_bilde(u, prisjakt.UA), urls)))
+            beholdt, rapport = filt.rydd(urls, p["kategori"], lastet.get)
+            if beholdt:  # tomt betyr at ingen bilder lot seg laste – behold da det vi hadde
+                p["bilder"] = beholdt
+            else:
+                p["bilder"] = urls[:bildefilter.MAKS_BILDER]
+            for_ += len(urls)
+            etter += len(p["bilder"])
+            for _, grunn in rapport:
+                if grunn:
+                    k = grunn.split(" (")[0]
+                    grunner[k] = grunner.get(k, 0) + 1
+            if (i + 1) % 50 == 0:
+                logg(f"  bilder: {i + 1}/{len(produkter)} varer")
+    logg(f"Bildefilter ({'modell' if filt.aktiv else 'bare oppløsning'}) på {time.time() - start:.0f} s: "
+         f"{for_} bilder inn, {etter} beholdt")
+    for k, n in sorted(grunner.items(), key=lambda x: -x[1]):
+        logg(f"  fjernet {n:4d}: {k}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ut", default=STANDARD_UT)
@@ -64,6 +93,7 @@ def main():
     ap.add_argument("--pause", type=float, default=0.4, help="sekunder mellom forespørsler per tråd")
     ap.add_argument("--min-varer", type=int, default=50, help="avbryt uten å skrive hvis færre totalt")
     ap.add_argument("--behold-fra", default=None, help="forrige datasett (standard: --ut hvis den finnes)")
+    ap.add_argument("--uten-bildefilter", action="store_true", help="hopp over bildemodellen (bare for rask testing)")
     a = ap.parse_args()
 
     slugs = a.kategorier.split(",") if a.kategorier else list(prisjakt.KATEGORIER)
@@ -85,6 +115,9 @@ def main():
     start = time.time()
     with ThreadPoolExecutor(max_workers=max(1, a.trader)) as ex:
         resultat = dict(ex.map(lambda s: hent_kategori(s, a.per_kategori, a.forsok, a.pause), slugs))
+
+    if not a.uten_bildefilter:
+        rydd_bilder([p for liste in resultat.values() for p in liste])
 
     produkter, ferske, beholdt = [], 0, []
     for slug in prisjakt.KATEGORIER:  # fast rekkefølge
