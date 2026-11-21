@@ -85,9 +85,10 @@
   }
 
   const alleKategorier = () => Object.keys(KATNAVN).filter(k => PER_KAT[k]?.length);
+  // Uten eget valg: alle kategorier unntatt dem datasettet sier skal være av som standard
   const valgteKategorier = () => {
-    const alle = alleKategorier();
-    return P.kategorier ? alle.filter(k => P.kategorier.includes(k)) : alle;
+    const alle = alleKategorier(), av = new Set(DATA.standard_av || []);
+    return P.kategorier ? alle.filter(k => P.kategorier.includes(k)) : alle.filter(k => !av.has(k));
   };
 
   // ---------- Ruting ----------
@@ -669,7 +670,7 @@
     },
     'alle-kat': () => {
       const alle = valgteKategorier().length === alleKategorier().length;
-      P.kategorier = alle ? [] : null; lagreP(); behold(visOppsett);
+      P.kategorier = alle ? [] : alleKategorier(); lagreP(); behold(visOppsett);
     },
     start: () => startSpill(),
     fortsett: () => gaa('spill'),

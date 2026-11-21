@@ -11,6 +11,9 @@
   "Hjem og kjøkken": {
    "kaffetraktere": "Kaffetraktere",
    "tom": "Tom kategori"
+  },
+  "Elektronikk og teknikk": {
+   "droner": "Droner"
   }
  },
  "produkter": [
@@ -153,6 +156,36 @@
    "inkl_mva": true,
    "valuta": "NOK",
    "kategori": "kaffetraktere"
+  },
+  {
+   "id": 401,
+   "navn": "Testdrone Mini",
+   "bilder": [
+    "https://cdn.pji.nu/product/standard/800/401.jpg"
+   ],
+   "prisjakt_url": "https://www.prisjakt.no/product.php?p=401",
+   "tilbud": {
+    "butikk": "Komplett",
+    "pris": 4990,
+    "frakt": 0,
+    "fraktmetode": "",
+    "transportor": "",
+    "leveringsdager": {
+     "min": 1,
+     "max": 3
+    },
+    "tilbudsnavn": "Testdrone Mini",
+    "url": "https://www.prisjakt.no/go-to-shop/401",
+    "butikkvurdering": 4.4
+   },
+   "totalpris": 4990,
+   "hentet": "2026-11-20T06:15:00+00:00",
+   "inkl_mva": true,
+   "valuta": "NOK",
+   "kategori": "droner"
   }
+ ],
+ "standard_av": [
+  "droner"
  ]
 }
