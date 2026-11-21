@@ -143,6 +143,7 @@ def main():
         "kilde": "Prisjakt.no",
         "regler": "Ny vare, på lager, ordinær pris uten rabatt eller kampanje. Totalpris = varepris + billigste frakt, inkl. 25 % mva.",
         "grupper": prisjakt.GRUPPER,
+        "standard_av": sorted(prisjakt.STANDARD_AV),
         "produkter": produkter,
     }
     os.makedirs(os.path.dirname(os.path.abspath(a.ut)), exist_ok=True)

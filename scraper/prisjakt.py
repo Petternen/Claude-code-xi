@@ -55,7 +55,16 @@ GRUPPER = {
     "Personlig pleie": {
         "elektriske-tannborster": "Elektriske tannbørster", "barbermaskiner": "Barbermaskiner",
     },
+    "Elektronikk og teknikk": {
+        "mobiltelefoner": "Mobiltelefoner", "tv": "TV", "hodetelefoner": "Hodetelefoner",
+        "smartklokker": "Smartklokker", "nettbrett": "Nettbrett", "spillkonsoller": "Spillkonsoller",
+        "pc-skjermer": "PC-skjermer", "projektorer": "Projektorer", "platespillere": "Platespillere",
+        "3d-printere": "3D-printere", "droner": "Droner", "gamingstoler": "Gamingstoler",
+        "mikrofoner": "Mikrofoner", "vr-briller": "VR-briller",
+    },
 }
+# Kategorier som kan velges, men som ikke er valgt når appen åpnes første gang
+STANDARD_AV = set(GRUPPER["Elektronikk og teknikk"])
 KATEGORIER = {s: n for g in GRUPPER.values() for s, n in g.items()}
 
 _cache = {}

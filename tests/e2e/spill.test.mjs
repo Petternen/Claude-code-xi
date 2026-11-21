@@ -208,3 +208,26 @@ test('vis/skjul tall huskes', async () => {
 test('testdataene ser ut som ekte data', () => {
   for (const p of DATA.produkter) assert.equal(p.totalpris, p.tilbud.pris + p.tilbud.frakt);
 });
+
+test('teknikk-kategoriene kan velges, men er av som standard', async () => {
+  const page = await newPage(base);
+  assert.equal(await page.getAttribute('[data-kat=droner]', 'aria-pressed'), 'false', 'av som standard');
+  assert.equal(await page.getAttribute('[data-kat=tv]', 'aria-pressed'), 'true', 'andre er på');
+  // Spill uten å velge: droner skal aldri komme
+  await leggTil(page, 'Kari');
+  for (let i = 0; i < 5; i++) {
+    await page.click('[data-act=start]');
+    assert.notEqual((await tilstand(page)).runder[0].prod.kategori, 'droner');
+    await page.goto(base + '#/'); await page.waitForSelector('.oppsett');
+  }
+  // Velg droner alene
+  await page.click('[data-act=alle-kat]');                       // «Velg alle» tar med teknikk
+  assert.equal(await page.getAttribute('[data-kat=droner]', 'aria-pressed'), 'true');
+  await page.click('[data-act=alle-kat]');                       // «Fjern alle»
+  await page.click('[data-kat=droner]');
+  await page.click('[data-act=start]');
+  assert.equal((await tilstand(page)).runder[0].prod.kategori, 'droner');
+  await page.reload();
+  await page.goto(base + '#/'); await page.waitForSelector('.oppsett');
+  assert.equal(await page.getAttribute('[data-kat=droner]', 'aria-pressed'), 'true', 'valget huskes');
+});
