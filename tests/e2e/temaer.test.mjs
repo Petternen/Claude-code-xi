@@ -112,7 +112,7 @@ for (const t of TEMAER) {
 
 // Smaleste telefon (iPhone SE 1. gen., 320 px): ingenting stikker ut, og hele beløpet synes i gjettefeltet
 for (const t of ['stjerne', ...TEMAER]) {
-  test(`tema ${t} på 320 px: ingen sidelengs scroll, sekssifret beløp synes helt`, async () => {
+  test(`tema ${t} på 320 px: ingen sidelengs scroll, hele beløpet synes`, async () => {
     const page = await newPage(base, { device: devices['iPhone SE'], storage: { tema: t } });
     await rolig(page);
     assert.ok(await noHScroll(page), 'oppsett');
@@ -123,11 +123,17 @@ for (const t of ['stjerne', ...TEMAER]) {
     await page.waitForSelector('#gjett-inp');
     await rolig(page);
     assert.ok(await noHScroll(page), 'gjetting');
-    for (const vis of [false, true]) {
-      if (vis) await page.click('[data-act=vis-tall]');
-      await page.fill('#gjett-inp', '129990');
-      const { sw, cw } = await page.$eval('#gjett-inp', e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
-      assert.ok(sw <= cw, `${vis ? 'synlige' : 'skjulte'} tall kuttes: ${sw} > ${cw}`);
+    // Også med en bred reserveskrift (skriften er ikke lastet ennå, eller maskinen har andre skrifter enn vår)
+    for (const bred of [false, true]) {
+      if (bred) await page.addStyleTag({ content: '#gjett-inp { font-family: "DejaVu Sans", Verdana, sans-serif !important; }' });
+      for (const vis of [false, true]) {
+        if (vis !== await page.evaluate(() => !document.querySelector('#gjett-inp').classList.contains('skjult'))) await page.click('[data-act=vis-tall]');
+        for (const tall of ['129990', '1299990']) {
+          await page.fill('#gjett-inp', tall);
+          const { sw, cw } = await page.$eval('#gjett-inp', e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+          assert.ok(sw <= cw, `${vis ? 'synlige' : 'skjulte'} tall (${tall}${bred ? ', bred skrift' : ''}) kuttes: ${sw} > ${cw}`);
+        }
+      }
     }
     for (const sel of ['[data-act=tema]', '#gjett-inp', '.gjett-skjema .knapp']) assert.ok(await inView(page, sel), `${sel} innenfor skjermen`);
     assert.deepEqual(page.errors, []);

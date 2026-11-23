@@ -112,6 +112,7 @@
     const felt = ['#gjett-inp', '#ny-spiller'].map(sel => [sel, $(sel)?.value]);
     rute();
     for (const [sel, v] of felt) if (v && $(sel)) $(sel).value = v;
+    tilpassTall();
   });
 
   function vis(html, midt = '') {
@@ -244,6 +245,14 @@
     const p = tilfeldig(tilfeldig(kandidater)); // først kategori, så vare – store kategorier dominerer ikke
     lager.sett('brukt', [...lager.hent('brukt', []), p.id].slice(-800));
     return p;
+  }
+
+  // Gjettefeltet krymper skriften når tallet ikke får plass (smale telefoner, brede reserveskrifter)
+  function tilpassTall(inp = $('#gjett-inp')) {
+    if (!inp) return;
+    inp.style.fontSize = '';
+    let px = parseFloat(getComputedStyle(inp).fontSize);
+    while (inp.scrollWidth > inp.clientWidth && px > 12) { px -= 1; inp.style.fontSize = px + 'px'; }
   }
 
   // Finnes det flere varer i spillets kategorier som ikke er brukt i dette spillet?
@@ -693,7 +702,7 @@
     avslutt: () => { if (S?.runder.some(r => r.fasit)) lagreHistorikk(); S = null; lager.fjern('spill'); behold(visOppsett); toast('Spillet er avsluttet'); },
     'vis-tall': el => {
       P.vis = !P.vis; lager.sett('vis-tall', P.vis);
-      const inp = $('#gjett-inp'); inp.classList.toggle('skjult', !P.vis);
+      const inp = $('#gjett-inp'); inp.classList.toggle('skjult', !P.vis); tilpassTall(inp);
       el.setAttribute('aria-pressed', P.vis); el.setAttribute('aria-label', P.vis ? 'Skjul tallene' : 'Vis tallene');
       el.innerHTML = P.vis ? IKON.oye : IKON.lukketOye; inp.focus();
     },
@@ -758,7 +767,7 @@
   });
 
   document.addEventListener('input', e => {
-    if (e.target.id === 'gjett-inp') { const f = $('#gjett-feil'); if (f) f.hidden = true; }
+    if (e.target.id === 'gjett-inp') { const f = $('#gjett-feil'); if (f) f.hidden = true; tilpassTall(e.target); }
   });
 
   // ---------- Temaer (Hallmark) ----------
