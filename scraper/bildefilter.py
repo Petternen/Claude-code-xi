@@ -103,10 +103,14 @@ class Bildefilter:
             return
         torch.set_num_threads(max(1, torch.get_num_threads()))
         self.torch = torch
-        self.modell, _, self.prep = open_clip.create_model_and_transforms(modell[0], pretrained=modell[1])
-        self.modell.eval()
-        self.tok = open_clip.get_tokenizer(modell[0])
         self._tekst = {}
+        try:
+            self.modell, _, self.prep = open_clip.create_model_and_transforms(modell[0], pretrained=modell[1])
+            self.modell.eval()
+            self.tok = open_clip.get_tokenizer(modell[0])
+        except Exception as e:  # nedlasting eller lasting av modellen feilet
+            _logg(f"Bildefilter: modellen kunne ikke lastes ({e}) – bruker bare oppløsning.")
+            self.modell = None
 
     @property
     def aktiv(self):

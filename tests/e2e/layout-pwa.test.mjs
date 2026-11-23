@@ -116,3 +116,46 @@ for (const [navn, device] of [['iPhone 13', devices['iPhone 13']], ['iPad liggen
     assert.ok(r.inni, `bildet går utenfor ruten: ${JSON.stringify(r)}`);
   });
 }
+
+test('installer-knappen er skjult når nettleseren ikke tilbyr installasjon', async () => {
+  for (const opt of [{ device: devices['iPhone 13'] }, { viewport: { width: 1280, height: 800 } }]) {
+    const page = await newPage(base, opt);
+    assert.equal(await page.isVisible('#installer'), false);
+  }
+});
+
+test('liggende telefon: topplinje og gjettepanel klistres ikke og dekker ikke varen', async () => {
+  const page = await newPage(base, { device: devices['iPhone 13 landscape'] });
+  await leggTil(page, 'Kari', 'Ola');
+  await page.click('[data-act=start]');
+  await page.waitForSelector('#gjett-inp');
+  const r = await page.evaluate(() => ({
+    topp: getComputedStyle(document.querySelector('.topp')).position,
+    panel: getComputedStyle(document.querySelector('.gjettepanel')).position,
+  }));
+  assert.deepEqual(r, { topp: 'static', panel: 'static' });
+  await page.locator('#gjett-inp').scrollIntoViewIfNeeded();
+  assert.ok(await inView(page, '#gjett-inp'));
+  assert.ok(await noHScroll(page));
+});
+
+test('mange runder på smal telefon: rundemerket får plass i topplinjen', async () => {
+  const page = await newPage(base, { device: devices['iPhone SE'], storage: { antall: 6, kategorier: ['tv', 'hodetelefoner', 'kaffetraktere', 'droner'] } });
+  await leggTil(page, 'Kari');
+  await page.click('[data-act=start]');
+  await page.waitForSelector('#gjett-inp');
+  const r = await page.$eval('#topp-midt', m => {
+    const mr = m.getBoundingClientRect(), rr = m.querySelector('.runde-merke').getBoundingClientRect();
+    return { inni: rr.left >= mr.left - 0.5 && rr.right <= mr.right + 0.5, knapper: [...document.querySelectorAll('.topp-knapper > *')].filter(b => b.getClientRects().length).every(b => b.getBoundingClientRect().right <= innerWidth) };
+  });
+  assert.deepEqual(r, { inni: true, knapper: true });
+  assert.ok(await noHScroll(page));
+});
+
+test('berøringsskjerm: tastaturhint («Esc tilbake») vises ikke', async () => {
+  const page = await newPage(base, { device: devices['iPhone 13'], path: '#/statistikk' });
+  await page.waitForSelector('.faner');
+  const synlige = await page.$$eval('kbd', l => l.filter(k => k.getClientRects().length).map(k => k.parentElement.textContent.trim()));
+  assert.deepEqual(synlige, []);
+  assert.doesNotMatch(await page.innerText('#skjerm'), /\btilbake\s*$/m);
+});

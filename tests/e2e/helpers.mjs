@@ -47,7 +47,7 @@ export async function newPage(base, { viewport = { width: 1024, height: 768 }, d
   const b = await getBrowser();
   const ctx = await b.newContext(device ? { ...device } : { viewport, hasTouch: true });
   openContexts.add(ctx);
-  await ctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
+  await ctx.route(/fonts\.(googleapis|gstatic)\.com|fontshare\.com/, r => r.abort());
   await ctx.route(/pji\.nu/, r => r.fulfill({ status: 200, contentType: 'image/png', body: BILDE }));
   if (!ekteData) await ctx.route(/\/data\/produkter\.json/, r => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data || DATA) }));
   if (storage) {
@@ -95,3 +95,6 @@ export async function inView(page, sel) {
   });
 }
 export const noHScroll = page => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
+/** Venter til inngangsanimasjonene (f.eks. kort som skaleres opp) er ferdige, så målene er de endelige. */
+export const rolig = page => page.evaluate(() => Promise.all(document.getAnimations()
+  .filter(a => a.effect?.getComputedTiming().iterations !== Infinity).map(a => a.finished.catch(() => {}))));

@@ -1,0 +1,253 @@
+/* Temaer fra Hallmark (MIT, github.com/Nutlope/hallmark): Carnival, Hum, Ultraviolet, Riso og Squeeze.
+   Hvert tema setter variablene fra app.css og legger til det som gjør materialet gjenkjennelig.
+   Standardtemaet «Stjernehimmel» ligger i app.css. Valget settes som data-tema på <html> (se temaer.js). */
+
+/* ── Felles for alle Hallmark-temaene ── */
+[data-tema="carnival"], [data-tema="hum"], [data-tema="ultraviolet"], [data-tema="riso"], [data-tema="squeeze"] {
+  --stjerner: none;
+  --straler: none;
+  --hode-skygge: none;
+  --side-tittel-skygge: none;
+}
+:is([data-tema="carnival"], [data-tema="hum"], [data-tema="ultraviolet"], [data-tema="riso"], [data-tema="squeeze"]) :is(.fasit .etikett, thead th, .chip .merke) {
+  letter-spacing: 0; text-transform: var(--hode-case); font-family: var(--font-display);
+}
+:is([data-tema="carnival"], [data-tema="hum"], [data-tema="ultraviolet"], [data-tema="riso"], [data-tema="squeeze"]) .fasit .pris { animation: none; }
+:is([data-tema="carnival"], [data-tema="hum"], [data-tema="ultraviolet"], [data-tema="riso"], [data-tema="squeeze"]) .seier .pokal { animation: none; }
+
+/* ── Carnival: skjermtrykt plakat, sennep og okseblod, hard blekkskygge ── */
+[data-tema="carnival"] {
+  --c-papir: oklch(92% 0.045 50); --c-papir-2: oklch(88% 0.050 45); --c-papir-3: oklch(82% 0.060 40);
+  --c-blekk: oklch(18% 0.080 20); --c-sennep: oklch(86% 0.18 95); --c-okseblod: oklch(40% 0.21 25);
+  --ink: var(--c-blekk); --ink-soft: oklch(36% 0.050 30);
+  --primary: var(--c-sennep); --primary-d: var(--c-blekk); --pa-primary: var(--c-blekk); --primary-tekst: var(--c-blekk);
+  --pink: var(--c-okseblod); --pink-d: var(--c-okseblod); --pa-rosa: var(--c-papir);
+  --yellow: var(--c-sennep); --yellow-d: var(--c-okseblod);
+  --green: var(--c-blekk); --green-d: var(--c-okseblod); --red: var(--c-okseblod);
+  --card: var(--c-papir-2); --soft: var(--c-papir); --line: var(--c-okseblod); --hvit: var(--c-papir);
+  --kant: var(--c-blekk); --kant-hvit: var(--c-blekk);
+  --font-display: "Big Shoulders Display", Impact, "Arial Narrow", sans-serif; --font-body: "Golos Text", system-ui, sans-serif;
+  --hode-vekt: 800; --hode-case: uppercase; --hode-sporing: 0.015em;
+  --bakgrunn: var(--c-papir); --sky: var(--c-papir);
+  --radius: 2px; --knapp-radius: 2px; --chip-radius: 2px; --felt-radius: 2px; --pill: 2px;
+  --shadow: 4px 4px 0 var(--c-blekk); --kort-kant: 2px solid var(--c-blekk);
+  --knapp-skygge: 4px 4px 0 var(--c-blekk); --knapp-trykk: 1px 1px 0 var(--c-blekk); --knapp-trykk-flytt: translate(3px, 3px);
+  --myk-skygge: 3px 3px 0 var(--c-blekk); --myk-trykk: 1px 1px 0 var(--c-blekk);
+  --chip-skygge: none; --chip-valgt-skygge: 3px 3px 0 var(--c-okseblod);
+  --felt-bg: oklch(97% 0.02 60); --felt-tekst: var(--c-blekk); --felt-kant: var(--c-blekk);
+  --panel-bg: var(--c-papir); --panel-skygge: 0 -4px 0 var(--c-blekk);
+  --vinner-bg: var(--c-sennep); --vinner-tekst: var(--c-blekk); --varsel-bg: var(--c-papir-3); --varsel-tekst: var(--c-blekk);
+  --hode-farge: var(--c-blekk); --hode-skygge: 4px 4px 0 var(--c-sennep); --hode-aksent: var(--c-blekk);
+  --fasit-bg: radial-gradient(oklch(18% 0.08 20 / 0.16) 1.5px, transparent 1.6px) 0 0 / 12px 12px, var(--c-sennep);
+  --fasit-tekst: var(--c-blekk);
+  --pris-bg: var(--c-papir); --pris-tekst: var(--c-blekk); --pris-skygge: 4px 4px 0 var(--c-blekk); --pris-radius: 2px;
+  --medalje: var(--c-okseblod); --medalje-tekst: var(--c-papir);
+  --gull-knapp: var(--c-okseblod); --gull-tekst: var(--c-papir); --gull-skygge: 4px 4px 0 var(--c-blekk);
+  --stolpe: var(--c-okseblod); --stolpe-vinner: var(--c-blekk);
+  --toast-bg: var(--c-blekk); --toast-tekst: var(--c-papir);
+  --fokus: 0 0 0 4px var(--c-okseblod); --fokus-farge: var(--c-okseblod); --melding-bg: var(--c-papir-2); --fane-skygge: 3px 3px 0 var(--c-blekk);
+}
+[data-tema="carnival"] :is(.knapp, .ikonknapp, .stepper button, .pil, .forstorr, .chip, .fasit .pris, .faner button) { border: 2px solid var(--c-blekk); }
+[data-tema="carnival"] .chip[aria-pressed="true"] { background: var(--c-blekk); color: var(--c-papir); }
+[data-tema="carnival"] .chip.gjest[aria-pressed="true"] { background: var(--c-okseblod); color: var(--c-papir); }
+[data-tema="carnival"] :is(.kategorigruppe, .vilkar div, .historikk > li, .h-runde) { border-top-style: solid; }
+[data-tema="carnival"] :is(th, td) { border-bottom-style: solid; }
+[data-tema="carnival"] .velkommen h1 { font-size: clamp(3rem, 12vw, 5.5rem); line-height: .95; }
+[data-tema="carnival"] .fasit .pris { font-size: clamp(3.2rem, 2.4rem + 6vw, 5.5rem); }
+[data-tema="carnival"] .fasit { border: 2px solid var(--c-blekk); }
+[data-tema="carnival"] .rangering li.vinner { box-shadow: inset 0 0 0 2px var(--c-blekk); }
+[data-tema="carnival"] .kategori-merke { box-shadow: 2px 2px 0 var(--c-blekk); }
+
+/* ── Hum: håndrevet papir, kremgult med korn, kartongknapper som trykkes ned ── */
+[data-tema="hum"] {
+  --h-papir: oklch(97% 0.012 95); --h-papir-2: oklch(94.5% 0.018 95); --h-papir-3: oklch(91% 0.022 95);
+  --h-blekk: oklch(20% 0.014 255); --h-paere: oklch(87% 0.175 96); --h-paere-dyp: oklch(72% 0.16 92);
+  --h-blaa: oklch(50% 0.17 250); --h-korall: oklch(70% 0.2 22); --h-mint: oklch(82% 0.15 152); --h-mint-dyp: oklch(48% 0.12 155);
+  --h-kartong: oklch(98.8% 0.007 95); --h-kant: oklch(83% 0.04 88);
+  --h-korn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --ink: var(--h-blekk); --ink-soft: oklch(44% 0.014 255);
+  --primary: var(--h-paere); --primary-d: var(--h-paere-dyp); --pa-primary: var(--h-blekk); --primary-tekst: var(--h-blaa);
+  --pink: var(--h-korall); --pink-d: oklch(50% 0.19 25); --pa-rosa: var(--h-blekk);
+  --yellow: var(--h-paere); --yellow-d: var(--h-paere-dyp);
+  --green: var(--h-mint); --green-d: var(--h-mint-dyp); --red: oklch(52% 0.2 25);
+  --card: var(--h-kartong); --soft: var(--h-papir-2); --line: oklch(87% 0.016 95); --hvit: var(--h-kartong);
+  --kant: var(--h-kant); --kant-hvit: var(--h-kant);
+  --font-display: "Chillax", ui-rounded, ui-sans-serif, sans-serif; --font-body: "Chillax", ui-rounded, ui-sans-serif, sans-serif;
+  --hode-vekt: 600; --hode-case: none; --hode-sporing: -0.03em;
+  --bakgrunn: var(--h-papir); --sky: var(--h-korn), var(--h-papir);
+  --radius: 24px; --knapp-radius: 16px; --chip-radius: 16px; --felt-radius: 14px; --pill: 999px;
+  --shadow: 0 1px 2px oklch(20% 0.014 255 / 0.06), 0 12px 28px -14px oklch(20% 0.014 255 / 0.22);
+  --knapp-skygge: 0 5px 0 var(--h-paere-dyp), 2px 9px 10px -3px oklch(20% 0.014 255 / 0.3);
+  --knapp-trykk: 0 1px 0 var(--h-paere-dyp); --knapp-trykk-flytt: translateY(4px);
+  --myk-skygge: 0 5px 0 var(--h-kant); --myk-trykk: 0 1px 0 var(--h-kant);
+  --chip-skygge: 0 4px 0 var(--h-kant); --chip-valgt-skygge: 0 4px 0 oklch(8% 0.01 255);
+  --felt-bg: var(--h-kartong); --felt-tekst: var(--h-blekk); --felt-kant: oklch(80% 0.02 95);
+  --panel-bg: var(--h-kartong);
+  --vinner-bg: oklch(93% 0.06 152); --vinner-tekst: var(--h-mint-dyp); --varsel-bg: oklch(95% 0.08 96); --varsel-tekst: var(--h-blekk);
+  --hode-farge: var(--h-blekk); --hode-aksent: var(--h-blekk);
+  --fasit-bg: var(--h-korn), var(--h-paere); --fasit-tekst: var(--h-blekk);
+  --pris-bg: var(--h-kartong); --pris-tekst: var(--h-blekk); --pris-skygge: 0 5px 0 var(--h-paere-dyp); --pris-radius: 16px;
+  --medalje: var(--h-paere); --medalje-tekst: var(--h-blekk);
+  --gull-knapp: var(--h-korn), var(--h-korall); --gull-tekst: var(--h-blekk);
+  --gull-skygge: 0 5px 0 oklch(56% 0.19 25), 2px 9px 10px -3px oklch(20% 0.014 255 / 0.3);
+  --stolpe: var(--h-blaa); --stolpe-vinner: var(--h-mint-dyp);
+  --toast-bg: var(--h-blekk); --toast-tekst: var(--h-kartong);
+  --fokus: 0 0 0 4px var(--h-blaa); --fokus-farge: var(--h-blaa); --melding-bg: var(--h-papir-2);
+}
+[data-tema="hum"] .knapp { background: var(--h-korn), var(--primary); }
+[data-tema="hum"] .knapp.hvit { background: var(--h-korn), var(--h-kartong); color: var(--h-blekk); }
+[data-tema="hum"] .knapp.gull { background: var(--gull-knapp); }
+[data-tema="hum"] .chip[aria-pressed="true"] { background: var(--h-blekk); color: var(--h-kartong); }
+[data-tema="hum"] .chip.gjest[aria-pressed="true"] { background: var(--h-korall); color: var(--h-blekk); box-shadow: 0 4px 0 oklch(56% 0.19 25); }
+[data-tema="hum"] :is(.kategorigruppe, .vilkar div, .historikk > li, .h-runde) { border-top-style: solid; }
+[data-tema="hum"] :is(th, td) { border-bottom-style: solid; }
+[data-tema="hum"] .lenke { color: var(--h-blaa); }
+
+/* ── Ultraviolet: én fiolett i to styrker, alt i små bokstaver, piller ── */
+[data-tema="ultraviolet"] {
+  --u-papir: oklch(95% 0.02 300); --u-papir-2: oklch(92% 0.03 300); --u-papir-3: oklch(89% 0.035 300);
+  --u-blekk: oklch(18% 0.02 300); --u-dempet: oklch(44% 0.05 300); --u-linje: oklch(84% 0.04 300); --u-linje-2: oklch(70% 0.08 295);
+  --u-fiolett: oklch(50% 0.25 290); --u-fiolett-dyp: oklch(43% 0.22 290); --u-fiolett-myk: oklch(86% 0.08 295); --u-lys: oklch(97% 0.01 300);
+  --ink: var(--u-blekk); --ink-soft: var(--u-dempet);
+  --primary: var(--u-fiolett); --primary-d: var(--u-fiolett-dyp); --pa-primary: var(--u-lys); --primary-tekst: var(--u-fiolett);
+  --pink: var(--u-blekk); --pink-d: var(--u-fiolett); --pa-rosa: var(--u-lys);
+  --yellow: var(--u-fiolett); --yellow-d: var(--u-fiolett);
+  --green: var(--u-fiolett); --green-d: var(--u-fiolett);
+  --card: var(--u-papir-2); --soft: var(--u-papir-3); --line: var(--u-linje); --hvit: var(--u-papir);
+  --kant: var(--u-linje-2); --kant-hvit: var(--u-linje-2);
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif; --font-body: "Onest", ui-sans-serif, sans-serif;
+  --hode-vekt: 500; --hode-case: lowercase; --hode-sporing: -0.03em;
+  --bakgrunn: var(--u-papir); --sky: var(--u-papir);
+  --radius: 16px; --knapp-radius: 999px; --chip-radius: 999px; --felt-radius: 999px; --pill: 999px;
+  --shadow: 0 1px 2px oklch(18% 0.02 300 / 0.06);
+  --knapp-skygge: none; --knapp-trykk: none; --knapp-trykk-flytt: translateY(1px);
+  --myk-skygge: inset 0 0 0 1.5px var(--u-linje-2); --myk-trykk: inset 0 0 0 1.5px var(--u-blekk);
+  --chip-skygge: inset 0 0 0 1.5px var(--u-linje-2); --chip-valgt-skygge: none;
+  --felt-bg: var(--u-papir); --felt-tekst: var(--u-blekk); --felt-kant: var(--u-linje-2);
+  --panel-bg: var(--u-papir-2);
+  --vinner-bg: var(--u-fiolett-myk); --vinner-tekst: var(--u-blekk); --varsel-bg: var(--u-fiolett-myk); --varsel-tekst: var(--u-blekk);
+  --hode-farge: var(--u-blekk); --hode-aksent: var(--u-blekk);
+  --fasit-bg: var(--u-fiolett); --fasit-tekst: var(--u-lys);
+  --pris-bg: oklch(99% 0.005 300); --pris-tekst: var(--u-fiolett); --pris-skygge: none; --pris-radius: 999px;
+  --medalje: var(--u-fiolett); --medalje-tekst: var(--u-lys);
+  --gull-knapp: var(--u-fiolett); --gull-tekst: var(--u-lys); --gull-skygge: none;
+  --stolpe: var(--u-fiolett-myk); --stolpe-vinner: var(--u-fiolett);
+  --toast-bg: var(--u-blekk); --toast-tekst: var(--u-lys);
+  --fokus: 0 0 0 4px var(--u-fiolett); --fokus-farge: var(--u-fiolett-dyp); --melding-bg: var(--u-papir-2); --fane-skygge: none;
+}
+[data-tema="ultraviolet"] :is(.knapp, .chip, .lenke, .faner button, .tur-teller, .kategori-merke, .stepper output) { text-transform: lowercase; }
+[data-tema="ultraviolet"] .knapp.hvit { background: transparent; color: var(--u-blekk); box-shadow: inset 0 0 0 1.5px var(--u-blekk); }
+[data-tema="ultraviolet"] .knapp:hover:not(.hvit) { background: var(--u-fiolett-dyp); }
+[data-tema="ultraviolet"] .fasit .pris, [data-tema="ultraviolet"] .stepper output { font-weight: 300; }
+[data-tema="ultraviolet"] .rangering .gjett { font-family: var(--font-display); font-weight: 300; font-size: 1.3rem; }
+[data-tema="ultraviolet"] .kr-felt input { font-weight: 300; }
+[data-tema="ultraviolet"] :is(.kategorigruppe, .vilkar div, th, td, .historikk > li, .h-runde) { border-width: 1px 0 0; border-top-style: solid; }
+[data-tema="ultraviolet"] :is(th, td) { border-width: 0 0 1px; border-bottom-style: solid; }
+[data-tema="ultraviolet"] .kr-felt input, [data-tema="ultraviolet"] .felt { border-width: 1.5px; }
+
+/* ── Riso: to trommer på ubestrøket papir – blått skriver, rosa fyller, aldri svart ── */
+[data-tema="riso"] {
+  --r-papir: oklch(97% 0.011 90); --r-rosa-raster: oklch(93.5% 0.034 356); --r-rosa-halv: oklch(84% 0.11 356);
+  --r-blaa: oklch(40% 0.165 265); --r-blaa-dempet: oklch(48% 0.115 265); --r-linje: oklch(85% 0.045 265);
+  --r-rosa: oklch(68% 0.235 356); --r-dypblaa: oklch(27% 0.13 265);
+  --r-korn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
+  --ink: var(--r-blaa); --ink-soft: var(--r-blaa-dempet);
+  --primary: var(--r-rosa); --primary-d: var(--r-blaa); --pa-primary: var(--r-dypblaa); --primary-tekst: var(--r-blaa);
+  --pink: var(--r-blaa); --pink-d: var(--r-blaa); --pa-rosa: var(--r-papir);
+  --yellow: var(--r-rosa); --yellow-d: var(--r-blaa);
+  --green: var(--r-blaa); --green-d: var(--r-blaa); --red: var(--r-dypblaa);
+  --card: var(--r-papir); --soft: var(--r-rosa-raster); --line: var(--r-linje); --hvit: var(--r-papir);
+  --kant: var(--r-blaa); --kant-hvit: var(--r-blaa);
+  --font-display: "Cabinet Grotesk", ui-sans-serif, sans-serif; --font-body: "Literata", ui-serif, Georgia, serif;
+  --hode-vekt: 800; --hode-case: none; --hode-sporing: -0.025em;
+  --bakgrunn: var(--r-papir); --sky: var(--r-korn), var(--r-papir);
+  --radius: 2px; --knapp-radius: 2px; --chip-radius: 2px; --felt-radius: 2px; --pill: 2px;
+  --shadow: none; --kort-kant: 1.5px solid var(--r-linje);
+  --knapp-skygge: none; --knapp-trykk: none; --knapp-trykk-flytt: translate(1px, 1px);
+  --myk-skygge: inset 0 0 0 1.5px var(--r-blaa); --myk-trykk: inset 0 0 0 1.5px var(--r-blaa);
+  --chip-skygge: inset 0 0 0 1.5px var(--r-blaa); --chip-valgt-skygge: none;
+  --felt-bg: var(--r-papir); --felt-tekst: var(--r-blaa); --felt-kant: var(--r-blaa);
+  --panel-bg: var(--r-rosa-raster); --panel-skygge: 0 -1.5px 0 var(--r-blaa);
+  --vinner-bg: var(--r-rosa-halv); --vinner-tekst: var(--r-dypblaa); --varsel-bg: var(--r-rosa-raster); --varsel-tekst: var(--r-blaa);
+  --hode-farge: var(--r-blaa); --hode-aksent: var(--r-blaa);
+  --fasit-bg: var(--r-korn), var(--r-rosa); --fasit-tekst: var(--r-dypblaa);
+  --pris-bg: var(--r-papir); --pris-tekst: var(--r-blaa); --pris-skygge: none; --pris-radius: 2px;
+  --medalje: var(--r-rosa); --medalje-tekst: var(--r-dypblaa);
+  --gull-knapp: var(--r-rosa); --gull-tekst: var(--r-dypblaa); --gull-skygge: none;
+  --stolpe: var(--r-blaa); --stolpe-vinner: var(--r-rosa);
+  --toast-bg: var(--r-blaa); --toast-tekst: var(--r-papir);
+  --fokus: 0 0 0 4px oklch(44% 0.2 265); --fokus-farge: oklch(44% 0.2 265); --melding-bg: var(--r-rosa-raster); --fane-skygge: none;
+}
+[data-tema="riso"] .knapp.hvit { background: transparent; color: var(--r-blaa); box-shadow: inset 0 0 0 1.5px var(--r-blaa); }
+[data-tema="riso"] .chip[aria-pressed="true"] { box-shadow: none; }
+[data-tema="riso"] .rangering li.vinner :is(.avvik, .navn, .gjett) { color: var(--r-dypblaa); }
+[data-tema="riso"] .chip.gjest[aria-pressed="true"] { background: var(--r-blaa); color: var(--r-papir); }
+/* Den ene feilregistrerte linjen: prisen trykkes i begge trommer, den rosa forskjøvet */
+[data-tema="riso"] .fasit .pris { text-shadow: 3px 3px 0 var(--r-rosa-halv); box-shadow: inset 0 0 0 1.5px var(--r-blaa); }
+[data-tema="riso"] .velkommen h1 { text-shadow: 3px 3px 0 var(--r-rosa); }
+[data-tema="riso"] :is(.kategorigruppe, .vilkar div, th, td, .historikk > li, .h-runde) { border-width: 1px 0 0; border-top-style: solid; }
+[data-tema="riso"] :is(th, td) { border-width: 0 0 1px; border-bottom-style: solid; }
+[data-tema="riso"] .kr-felt input, [data-tema="riso"] .felt { border-width: 1.5px; }
+[data-tema="riso"] .lenke { text-decoration-color: var(--r-rosa); text-decoration-thickness: 2px; }
+
+/* ── Squeeze: markedsbod i skoggrønt, varm hvit tekst, ferskenfargede knapper ── */
+[data-tema="squeeze"] {
+  --s-gronn: oklch(41% 0.100 154); --s-gronn-lys: oklch(47% 0.105 154); --s-gronn-dyp: oklch(34% 0.090 156);
+  --s-hvit: oklch(99% 0.005 90); --s-dempet: oklch(90% 0.030 150); --s-linje: oklch(55% 0.100 154);
+  --s-fersken: oklch(83% 0.115 56); --s-fersken-2: oklch(74% 0.150 46); --s-fersken-blekk: oklch(30% 0.070 40);
+  --s-gul: oklch(88% 0.14 85); --s-kort: oklch(97% 0.012 85); --s-kort-blekk: oklch(24% 0.05 160);
+  --ink: var(--s-hvit); --ink-soft: var(--s-dempet);
+  --primary: var(--s-fersken); --primary-d: var(--s-fersken-2); --pa-primary: var(--s-fersken-blekk); --primary-tekst: var(--s-hvit);
+  --pink: var(--s-fersken-2); --pink-d: var(--s-hvit); --pa-rosa: var(--s-fersken-blekk);
+  --yellow: var(--s-fersken); --yellow-d: var(--s-fersken);
+  --green: var(--s-fersken); --green-d: var(--s-fersken); --red: oklch(86% 0.1 30);
+  --card: var(--s-gronn-lys); --soft: var(--s-gronn-dyp); --line: var(--s-linje); --hvit: var(--s-gronn-dyp);
+  --kant: var(--s-gronn-dyp); --kant-hvit: var(--s-gronn-dyp);
+  --font-display: "Gabarito", ui-sans-serif, system-ui, sans-serif; --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --hode-vekt: 800; --hode-case: none; --hode-sporing: -0.025em;
+  --bakgrunn: var(--s-gronn); --sky: var(--s-gronn);
+  --radius: 24px; --knapp-radius: 16px; --chip-radius: 999px; --felt-radius: 16px; --pill: 999px;
+  --shadow: none;
+  --knapp-skygge: none; --knapp-trykk: none; --knapp-trykk-flytt: translateY(1px);
+  --myk-skygge: none; --myk-trykk: none;
+  --chip-skygge: none; --chip-valgt-skygge: inset 0 0 0 3px var(--s-fersken);
+  --felt-bg: var(--s-kort); --felt-tekst: var(--s-kort-blekk); --felt-kant: var(--s-linje); --kr-farge: oklch(40% 0.05 160);
+  --panel-bg: var(--s-gronn-lys); --panel-skygge: 0 -10px 30px -12px oklch(22% 0.05 160 / 0.6);
+  --vinner-bg: var(--s-gronn-dyp); --vinner-tekst: var(--s-hvit); --varsel-bg: var(--s-gronn-dyp); --varsel-tekst: var(--s-hvit);
+  --hode-farge: var(--s-hvit); --hode-aksent: var(--s-hvit);
+  --fasit-bg: var(--s-kort); --fasit-tekst: var(--s-kort-blekk);
+  --pris-bg: transparent; --pris-tekst: var(--s-kort-blekk); --pris-skygge: none; --pris-radius: 0;
+  --medalje: var(--s-fersken); --medalje-tekst: var(--s-fersken-blekk);
+  --gull-knapp: var(--s-fersken); --gull-tekst: var(--s-fersken-blekk); --gull-skygge: none;
+  --stolpe: var(--s-fersken); --stolpe-vinner: var(--s-gul);
+  --toast-bg: var(--s-kort); --toast-tekst: var(--s-kort-blekk);
+  --fokus: 0 0 0 4px var(--s-gul); --fokus-farge: var(--s-gul); --melding-bg: var(--s-gronn-dyp); --fane-skygge: inset 0 0 0 3px var(--s-fersken);
+}
+[data-tema="squeeze"] .knapp:hover:not(.hvit) { background: var(--s-fersken-2); }
+[data-tema="squeeze"] .knapp.hvit { background: transparent; color: var(--s-hvit); box-shadow: inset 0 0 0 2px var(--s-hvit); }
+[data-tema="squeeze"] .chip[aria-pressed="true"] { background: var(--s-gronn-dyp); color: var(--s-hvit); }
+[data-tema="squeeze"] .chip.gjest[aria-pressed="true"] { background: var(--s-fersken-2); color: var(--s-fersken-blekk); box-shadow: none; }
+[data-tema="squeeze"] .chip.slett { background: var(--s-gronn-dyp); color: var(--s-hvit); box-shadow: none; }
+[data-tema="squeeze"] .fasit { box-shadow: 0 14px 32px -16px oklch(22% 0.05 160 / 0.5); }
+[data-tema="squeeze"] .fasit .pris { font-size: clamp(3.6rem, 2.4rem + 8vw, 6.5rem); letter-spacing: -0.04em; line-height: .95; padding: 0; }
+[data-tema="squeeze"] .bryter input { accent-color: var(--s-fersken); }
+[data-tema="squeeze"] :is(.kategorigruppe, .vilkar div, .historikk > li, .h-runde) { border-top-style: solid; }
+[data-tema="squeeze"] :is(th, td) { border-bottom-style: solid; }
+[data-tema="squeeze"] kbd { background: oklch(34% 0.09 156 / 0.6); color: var(--s-dempet); border-color: transparent; }
+
+/* ── Temavelgeren ── */
+.temavelger { width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: var(--radius); background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.temavelger::backdrop { background: rgba(20, 14, 40, .55); }
+.temavelger-innhold { padding: 18px; display: grid; gap: 14px; }
+.temaliste { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 42vw), 1fr)); gap: 10px; }
+.temavalg { display: grid; gap: 6px; padding: 8px; border: 0; border-radius: calc(var(--radius) * .6); background: var(--soft); color: var(--ink); text-align: left; cursor: pointer; }
+.temavalg[aria-checked="true"] { box-shadow: inset 0 0 0 3px var(--primary-tekst); }
+.temavalg .tema-navn { font-weight: 800; padding: 0 4px; }
+.temavalg .tema-beskr { font-size: .85rem; color: var(--ink-soft); padding: 0 4px 2px; }
+.tema-prov { display: grid; gap: 8px; padding: 12px 10px; border-radius: calc(var(--radius) * .5); background: var(--sky); color: var(--ink); min-height: 112px; align-content: start; overflow: hidden; }
+.tema-prov-tittel { font: var(--hode-vekt) clamp(1.05rem, 0.9rem + 1vw, 1.4rem)/1 var(--font-display); text-transform: var(--hode-case); letter-spacing: var(--hode-sporing); color: var(--hode-farge); text-shadow: var(--hode-skygge); }
+.tema-prov-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tema-prov-knapp { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: var(--knapp-radius); background: var(--primary); color: var(--pa-primary); font: 800 .9rem/1.2 var(--font-display); text-transform: var(--hode-case); box-shadow: var(--knapp-skygge); }
+.tema-prov-pris { display: inline-block; padding: 2px 10px; border-radius: var(--pris-radius); background: var(--pris-bg); color: var(--pris-tekst); font: 800 .95rem/1.3 var(--font-display); }
+.tema-prov-kort { display: block; height: 10px; border-radius: 99px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
+[data-tema="carnival"] .tema-prov-knapp { border: 2px solid var(--c-blekk); }

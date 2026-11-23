@@ -259,9 +259,11 @@ def hent_produkt(pid):
 
 
 _PRIS_I_NAVN = re.compile(
-    r"\s*[-–|:]\s*[^-–|]*?(?:\bfra\s+)?\d[\d\s .,]*\s*(?:kr|,-|nok)\b.*$"
+    r"\s*[-–|:]\s*[^-–|]*?(?:\bfra\s+)?\d[\d\s .,]*\s*(?:kr\b|,-|nok\b).*$"
+    r"|\s*[-–|:]\s*[^-–|]*?\b(?:kr|nok)\.?\s*\d.*$"
     r"|\s*[-–|]\s*(?:black\s*friday|cyber\s*monday|tilbud|salg|kampanje|rabatt)\b.*$"
-    r"|\s+(?:fra\s+)?\d[\d\s .,]*\s*(?:kr|,-)\s*$",
+    r"|\s+(?:fra\s+)?\d[\d\s .,]*\s*(?:kr|,-)\s*$"
+    r"|\s+(?:kr|nok)\.?\s*\d[\d\s.,]*(?:,-)?\s*$",
     re.I)
 
 

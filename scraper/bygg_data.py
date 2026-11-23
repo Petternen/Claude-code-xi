@@ -67,7 +67,11 @@ def rydd_bilder(produkter, trader=8):
         for i, p in enumerate(produkter):
             urls = p["bilder"]
             lastet = dict(zip(urls, ex.map(lambda u: bildefilter.hent_bilde(u, prisjakt.UA), urls)))
-            beholdt, rapport = filt.rydd(urls, p["kategori"], lastet.get)
+            try:
+                beholdt, rapport = filt.rydd(urls, p["kategori"], lastet.get)
+            except Exception as e:  # én vare som feiler skal ikke stoppe hele hentingen
+                logg(f"  bilder for {p['id']} feilet ({e}) – beholder dem som de er")
+                beholdt, rapport = [], []
             if beholdt:  # tomt betyr at ingen bilder lot seg laste – behold da det vi hadde
                 p["bilder"] = beholdt
             else:

@@ -16,7 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="temaer.js"></script>
 <link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="temaer.css">
 </head>
 <body>
 <div class="sky" aria-hidden="true"></div>
@@ -30,6 +32,9 @@
     <nav class="topp-knapper">
       <button class="ikonknapp" id="installer" hidden aria-label="Installer appen" title="Installer appen">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+      </button>
+      <button class="ikonknapp" data-act="tema" aria-label="Utseende" title="Utseende (U)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>
       </button>
       <a class="ikonknapp" href="#/statistikk" aria-label="Statistikk" title="Statistikk (T)">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11m7 9V5m7 15v-6"/></svg>
@@ -48,6 +53,19 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
   </button>
   <div id="lysboks-innhold"></div>
+</dialog>
+
+<dialog class="temavelger" id="temavelger" aria-labelledby="tema-tittel">
+  <div class="temavelger-innhold">
+    <div class="kort-topp" style="margin:0">
+      <h2 id="tema-tittel">Utseende</h2>
+      <button class="ikonknapp" data-act="lukk-tema" aria-label="Lukk (Esc)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="temaliste" id="temaliste" role="radiogroup" aria-labelledby="tema-tittel"></div>
+    <p class="liten dempet" style="margin:0">Temaene Carnival, Hum, Ultraviolet, Riso og Squeeze er fra Hallmark (MIT-lisens). Valget huskes på denne enheten.<span class="tastatur-hint" style="display:inline"> <kbd>←</kbd> <kbd>→</kbd> bytter tema, <kbd>Esc</kbd> lukker.</span></p>
+  </div>
 </dialog>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">

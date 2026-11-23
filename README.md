@@ -23,6 +23,20 @@ Etter første åpning virker appen også uten nett. Da brukes prisene den hentet
 
 Under hvert produkt står de samme vilkårene som på PC: butikk, inkl. 25 % mva, frakt (beløp, metode, transportør, leveringstid), ordinær pris uten rabatt/kampanje/kupong, ny vare på lager, når prisen ble hentet og hva tilbudet gjelder.
 
+## Utseende (temaer)
+Trykk på paletten øverst (eller `U`) for å bytte utseende. Valget huskes på enheten.
+
+| Tema | Stil |
+|---|---|
+| **Stjernehimmel** (standard) | Lilla himmel, runde 3D-knapper (fra Stjerneskolen) |
+| **Carnival** | Skjermtrykt plakat: Big Shoulders-versaler, sennep og okseblod, hard blekkskygge |
+| **Hum** | Kremgult papir med korn, avrundet Chillax, kartongknapper som trykkes ned |
+| **Ultraviolet** | Lavendel og én fiolett, Outfit i små bokstaver, piller |
+| **Riso** | Risograf i to trommer: blått skriver, rosa fyller, aldri svart |
+| **Squeeze** | Markedsbod i skoggrønt, Gabarito, ferskenfargede knapper |
+
+De fem siste er hentet fra [Hallmark](https://github.com/Nutlope/hallmark) (MIT-lisens): farger (OKLCH), skrifttyper, radius, skygger og knappestil er tatt fra temafilene. Temaene ligger i `app/temaer.css`, og `app/temaer.js` setter temaet før siden tegnes og laster bare skrifttypene til temaet som brukes. Alle temaene er testet for kontrast (WCAG 4,5:1, 3:1 for stor tekst) gjennom et helt spill.
+
 ## Bilder
 - **Bare produktets eget galleri.** Bildene hentes fra galleriet øverst på Prisjakt-siden (`imageUrls`), ikke fra resten av siden, der det også ligger bilder av andre farger og andre produkter.
 - **Skarpe bilder.** Bilder fra `media.pji.nu` hentes i den størrelsen skjermen trenger (240–2000 px), og fullskjerm (forstørr-knappen eller trykk på bildet) får den største. Bilder fra `cdn.pji.nu` finnes bare i én størrelse (maks 800 px).
@@ -44,7 +58,8 @@ Under hvert produkt står de samme vilkårene som på PC: butikk, inkl. 25 % mva
 ## Tastatur (nettbrett med tastatur / PC)
 | Skjerm | Taster |
 |---|---|
-| Oppsett | `N` nytt navn, `Enter` start, `F` fortsett pågående spill, `T` statistikk |
+| Oppsett | `N` nytt navn, `Enter` start, `F` fortsett pågående spill, `T` statistikk, `U` utseende |
+| Utseende | `←`/`→` bytter tema med en gang, `Enter` eller `Esc` lukker |
 | Gjetting | `0–9` begynner å skrive, `Enter` lås inn, `←`/`→` bilder, `Esc` ut av feltet |
 | Fasit | `Enter` neste runde / se resultat |
 | Resultat | `Enter` spill igjen |
@@ -72,7 +87,7 @@ npm test                      # Python-tester + nettlesertester (ca. 1 min)
 
 | Mappe | Innhold |
 |---|---|
-| `app/` | Selve appen: `index.html`, `app.js`, `app.css`, `fx.js` (konfetti), `sw.js` (offline), `manifest.webmanifest`, `ikoner/`, `data/produkter.json` |
+| `app/` | Selve appen: `index.html`, `app.js`, `app.css`, `temaer.css` og `temaer.js` (utseende), `fx.js` (konfetti), `sw.js` (offline), `manifest.webmanifest`, `ikoner/`, `data/produkter.json` |
 | `scraper/` | `prisjakt.py` (portert fra PC-versjonen), `bildefilter.py` (rydder bildene) og `bygg_data.py` som lager datasettet |
 | `tests/` | `test_prisjakt.py` (uten nett), `e2e/` nettlesertester på iPhone SE, iPhone 13, Android, iPad stående/liggende og PC |
 
