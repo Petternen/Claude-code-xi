@@ -95,3 +95,6 @@ export async function inView(page, sel) {
   });
 }
 export const noHScroll = page => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
+/** Venter til inngangsanimasjonene (f.eks. kort som skaleres opp) er ferdige, så målene er de endelige. */
+export const rolig = page => page.evaluate(() => Promise.all(document.getAnimations()
+  .filter(a => a.effect?.getComputedTiming().iterations !== Infinity).map(a => a.finished.catch(() => {}))));

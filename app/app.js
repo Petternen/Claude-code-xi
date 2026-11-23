@@ -12,7 +12,7 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' });
   const TID = new Intl.DateTimeFormat('nb-NO', { hour: '2-digit', minute: '2-digit' });
-  const datotid = iso => { const d = new Date(iso); return isNaN(d) ? String(iso || '') : `${DATO.format(d)} kl. ${TID.format(d)}`; };
+  const datotid = iso => { const d = new Date(iso); return isNaN(d) ? esc(iso || '') : `${DATO.format(d)} kl. ${TID.format(d)}`; };
   const nokkel = n => String(n).toLocaleLowerCase('nb').trim();
   const lik = (a, b) => nokkel(a) === nokkel(b);
   const tilfeldig = l => l[Math.floor(Math.random() * l.length)];
@@ -96,7 +96,10 @@
     if (!DATA) return;
     const h = location.hash.replace(/^#\/?/, '');
     if (h === 'spill' && S && !S.ferdig && S.runder.length) return visRunde();
-    if (h === 'resultat' && S && S.runder.some(r => r.fasit)) return visResultat();
+    if (h === 'resultat' && S && S.runder.some(r => r.fasit)) {
+      if (!S.ferdig && S.runder.length && !aktiv().fasit) { history.replaceState(null, '', '#/spill'); return visRunde(); }
+      return visResultat();
+    }
     if (h.startsWith('statistikk')) return visStatistikk(h.includes('historikk') ? 'historikk' : 'toppliste');
     return visOppsett();
   }
@@ -104,7 +107,12 @@
     if (location.hash === '#/' + h || (!h && !location.hash)) rute(); else location.hash = '#/' + h;
   }
   addEventListener('hashchange', () => { rute(); scrollTo(0, 0); });
-  BRED.addEventListener?.('change', () => { if (DATA) rute(); });
+  BRED.addEventListener?.('change', () => {
+    if (!DATA) return;
+    const felt = ['#gjett-inp', '#ny-spiller'].map(sel => [sel, $(sel)?.value]);
+    rute();
+    for (const [sel, v] of felt) if (v && $(sel)) $(sel).value = v;
+  });
 
   function vis(html, midt = '') {
     const m = $('#skjerm');
@@ -238,6 +246,12 @@
     return p;
   }
 
+  // Finnes det flere varer i spillets kategorier som ikke er brukt i dette spillet?
+  const flereVarer = () => {
+    const brukt = new Set(S.runder.map(r => r.prod.id));
+    return S.kategorier.some(k => (PER_KAT[k] || []).some(p => !brukt.has(p.id)));
+  };
+
   function startSpill() {
     const kat = valgteKategorier();
     if (!P.valgt.length) { toast('Legg til minst én spiller'); $('#ny-spiller')?.focus(); return; }
@@ -246,7 +260,8 @@
       id: 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       start: new Date().toISOString(),
       spillere: P.valgt.map(v => ({ navn: v.navn, fast: v.fast })),
-      kategorier: kat, antall: P.antall, runder: [], ferdig: false,
+      kategorier: kat, runder: [], ferdig: false,
+      antall: Math.max(1, Math.min(P.antall, kat.reduce((n, k) => n + (PER_KAT[k] || []).length, 0))),
     };
     if (!nyRunde()) return;
     gaa('spill');
@@ -277,14 +292,15 @@
 
   function rundeMerke() {
     const nr = S.runder.length, totalt = Math.max(S.antall, nr);
-    const prikker = totalt <= 10 ? `<span class="prikkrekke" aria-hidden="true">${Array.from({ length: totalt }, (_, i) =>
+    const prikker = totalt <= 6 ? `<span class="prikkrekke" aria-hidden="true">${Array.from({ length: totalt }, (_, i) =>
       `<i class="${i < nr - 1 || (i === nr - 1 && aktiv().fasit) ? 'ferdig' : i === nr - 1 ? 'na' : ''}"></i>`).join('')}</span>` : '';
     return `<span class="runde-merke">${prikker}<span>Runde ${nr}<span class="dempet"> av ${totalt}</span></span></span>`;
   }
 
   function leveringstid(d) {
     if (!d || typeof d !== 'object') return '';
-    return d.min === d.max ? `${d.min} ${d.min === 1 ? 'dag' : 'dager'}` : `${d.min}–${d.max} dager`;
+    const [a, b] = [esc(d.min), esc(d.max)];
+    return a === b ? `${a} ${a === '1' ? 'dag' : 'dager'}` : `${a}–${b} dager`;
   }
 
   /** Samme vilkår som PC-versjonen viser før man gjetter. */
@@ -382,7 +398,7 @@
     const p = r.prod, t = p.tilbud || {}, nr = S.runder.length;
     const liste = beregn(r);
     const vinnere = liste.filter(g => g.vinner);
-    const siste = nr >= S.antall;
+    const siste = nr >= S.antall || !flereVarer();
     const overskrift = !vinnere.length ? 'Ingen gjetninger'
       : S.spillere.length === 1 ? (Math.round(liste[0].abs) === 0 ? 'Helt riktig!' : `${pst(liste[0].pst)} unna`)
       : vinnere.length > 1 ? `Delt seier: ${esc(vinnere.map(v => v.navn).join(' og '))}` : `${esc(vinnere[0].navn)} vinner runden!`;
@@ -405,12 +421,12 @@
         </section>
         ${bred() ? '' : vilkarHTML(p)}
         <div class="lenker">
-          ${t.url ? `<a class="lenke" href="${esc(t.url)}" target="_blank" rel="noopener noreferrer">Tilbudet hos ${esc(t.butikk || 'butikken')} ↗</a>` : ''}
+          ${/^https?:\/\//i.test(t.url || '') ? `<a class="lenke" href="${esc(t.url)}" target="_blank" rel="noopener noreferrer">Tilbudet hos ${esc(t.butikk || 'butikken')} ↗</a>` : ''}
           ${p.prisjakt_url ? `<a class="lenke" href="${esc(p.prisjakt_url)}" target="_blank" rel="noopener noreferrer">Se på Prisjakt ↗</a>` : ''}
         </div>
         <div class="handlinger${siste ? ' to' : ''}">
           ${siste
-            ? `<button class="knapp hvit" data-act="en-til">+ Én runde til</button>
+            ? `${flereVarer() ? '<button class="knapp hvit" data-act="en-til">+ Én runde til</button>' : '<p class="dempet liten" style="margin:0;align-self:center">Ingen flere varer i de valgte kategoriene.</p>'}
                <button class="knapp" data-act="ferdig" id="hoved">Se resultat <kbd>Enter</kbd></button>`
             : `<button class="knapp stor" data-act="neste" id="hoved">Neste runde <kbd>Enter</kbd></button>`}
         </div>
@@ -523,8 +539,8 @@
       <section class="kort"><h2 style="margin-bottom:4px">Rundene</h2>
         <ul class="historikk">${spill.runder.map((r, i) => rundeLinje({ navn: r.prod.navn, bilde: (r.prod.bilder || [])[0], totalpris: r.prod.totalpris, butikk: r.prod.tilbud?.butikk, gjett: r.gjett }, i)).join('')}</ul>
       </section>
-      <div class="handlinger to">
-        <button class="knapp hvit" data-act="en-til">+ Én runde til</button>
+      <div class="handlinger${flereVarer() ? ' to' : ''}">
+        ${flereVarer() ? '<button class="knapp hvit" data-act="en-til">+ Én runde til</button>' : ''}
         <button class="knapp" data-act="spill-igjen" id="hoved">Spill igjen <kbd>Enter</kbd></button>
       </div>
       <button class="lenke" data-act="til-oppsett" style="justify-self:center">Endre spillere eller kategorier</button>
@@ -571,7 +587,7 @@
         </div>
       </div>
       <section class="kort">${innhold}</section>
-      <p class="dempet liten" style="text-align:center;margin:0">Resultatene lagres på denne enheten. <kbd>Esc</kbd> tilbake</p>
+      <p class="dempet liten" style="text-align:center;margin:0">Resultatene lagres på denne enheten.<span class="tastatur-hint" style="display:inline"> <kbd>Esc</kbd> tilbake</span></p>
     </div>`);
   }
 
@@ -683,10 +699,17 @@
     },
     angre: () => { aktiv().gjett.pop(); lagreS(); tegnPanel(true); },
     fasit: () => visFasitNa(),
-    neste: () => { if (nyRunde()) { visRunde(); scrollTo(0, 0); } },
+    neste: () => {
+      if (nyRunde()) { visRunde(); scrollTo(0, 0); return; }
+      S.antall = S.runder.length; H.ferdig();   // tomt for varer: avslutt i stedet for å bli stående fast
+    },
     'en-til': () => {
-      S.antall = Math.max(S.antall, S.runder.length) + 1; S.ferdig = false;
-      if (nyRunde()) { if (location.hash === '#/spill') visRunde(); else gaa('spill'); scrollTo(0, 0); }
+      // En runde som ikke er avslørt ennå: fortsett den i stedet for å legge til en ny
+      if (S.runder.length && !aktiv().fasit) { S.ferdig = false; lagreS(); gaa('spill'); return; }
+      if (!nyRunde()) return;                       // nyRunde gir selv beskjed når varene er brukt opp
+      S.antall = Math.max(S.antall, S.runder.length); S.ferdig = false; lagreS();
+      if (location.hash === '#/spill') visRunde(); else gaa('spill');
+      scrollTo(0, 0);
     },
     ferdig: () => { S.ferdig = true; lagreS(); lagreHistorikk(); gaa('resultat'); },
     'spill-igjen': () => { P.valgt = S.spillere.map(s => ({ ...s })); lagreP(); startSpill(); },

@@ -42,7 +42,7 @@
   --gull-skygge: 0 6px 0 var(--yellow-d), 0 12px 26px rgba(229, 158, 0, .38);
   --stolpe: linear-gradient(90deg, #ff8fc2, #a98bff); --stolpe-vinner: linear-gradient(90deg, #5ef2a8, #17a56c);
   --toast-bg: var(--ink); --toast-tekst: #fff;
-  --fokus: 0 0 0 7px var(--primary);
+  --fokus: 0 0 0 7px var(--primary); --fokus-farge: var(--primary-d);
   color-scheme: light;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -63,7 +63,9 @@ svg { display: block; }
 .dempet { color: var(--ink-soft); }
 .liten { font-size: .9rem; }
 .skjult-visuelt { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-:focus-visible { outline: 4px solid var(--hvit); outline-offset: 3px; box-shadow: var(--fokus); }
+:focus-visible { outline: 3px solid var(--fokus-farge); outline-offset: 3px; }
+/* [hidden] skal alltid skjule, også elementer med egen display (f.eks. .ikonknapp) */
+[hidden] { display: none !important; }
 kbd {
   font: 700 .7rem/1 var(--font-body); padding: 3px 6px; border-radius: 6px;
   background: rgba(58, 42, 110, .08); color: var(--ink-soft); border: 1px solid rgba(58, 42, 110, .12);
@@ -96,8 +98,8 @@ kbd {
 .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: var(--font-display); font-weight: var(--hode-vekt); text-transform: var(--hode-case); font-size: 1.35rem; line-height: 1; min-height: 44px; }
 .logo svg { width: 34px; height: 34px; filter: drop-shadow(0 3px 0 rgba(86, 54, 224, .25)); }
 .logo b { color: var(--primary-tekst); } .logo span { color: var(--pink-d); }
-.topp-midt { flex: 1; min-width: 0; display: flex; justify-content: center; }
-.runde-merke { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; white-space: nowrap; }
+.topp-midt { flex: 1; min-width: 0; display: flex; justify-content: center; overflow: hidden; }
+.runde-merke { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; white-space: nowrap; min-width: 0; }
 .prikkrekke { display: flex; gap: 6px; }
 .prikkrekke i { width: 14px; height: 14px; border-radius: 50%; background: var(--soft); box-shadow: inset 0 0 0 2px var(--line); }
 .prikkrekke i.ferdig { background: var(--green); box-shadow: none; }
@@ -262,16 +264,18 @@ main {
 .gjett-skjema { display: flex; gap: 10px; align-items: flex-start; }
 .kr-felt { position: relative; flex: 1; min-width: 0; }
 .kr-felt input {
-  width: 100%; height: 64px; padding: 0 96px 0 18px; border-radius: calc(var(--felt-radius) + 2px); border: 3px solid var(--felt-kant); background: var(--felt-bg);
+  width: 100%; height: 64px; padding: 0 78px 0 16px; border-radius: calc(var(--felt-radius) + 2px); border: 3px solid var(--felt-kant); background: var(--felt-bg);
   font: 800 1.9rem var(--font-display); color: var(--felt-tekst); font-variant-numeric: tabular-nums; letter-spacing: .02em;
 }
 .kr-felt input.skjult { -webkit-text-security: disc; text-security: disc; letter-spacing: .12em; }
 .kr-felt input:focus { outline: none; border-color: var(--primary-tekst); box-shadow: 0 0 0 5px rgba(123, 92, 255, .2); }
-.kr-felt .kr { position: absolute; right: 56px; top: 50%; translate: 0 -50%; color: var(--kr-farge, var(--ink-soft)); font-weight: 800; font-size: 1.2rem; pointer-events: none; }
-.kr-felt .oye { position: absolute; right: 8px; top: 50%; translate: 0 -50%; width: 42px; height: 42px; border-radius: 14px; border: 0; background: var(--soft); color: var(--ink-soft); display: grid; place-items: center; }
+.kr-felt .kr { position: absolute; right: 50px; top: 50%; translate: 0 -50%; color: var(--kr-farge, var(--ink-soft)); font-weight: 800; font-size: 1.2rem; pointer-events: none; }
+.kr-felt .oye { position: absolute; right: 7px; top: 50%; translate: 0 -50%; width: 38px; height: 38px; border-radius: 14px; border: 0; background: var(--soft); color: var(--ink-soft); display: grid; place-items: center; }
 .kr-felt .oye svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .gjett-skjema .knapp { height: 64px; min-width: 112px; font-size: 1.3rem; }
 .levert { display: flex; flex-wrap: wrap; gap: 6px; }
+.gjettepanel.klebrig .levert { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.gjettepanel.klebrig .levert span { flex: none; }
 .levert span { display: inline-flex; align-items: center; gap: 4px; padding: 3px 12px; border-radius: 99px; background: var(--soft); color: var(--ink-soft); font-size: .92rem; font-weight: 800; }
 .levert span.ja { background: var(--vinner-bg); color: var(--vinner-tekst); }
 .levert span.na { background: var(--varsel-bg); color: var(--varsel-tekst); box-shadow: inset 0 0 0 2px var(--yellow); }
@@ -415,8 +419,10 @@ tr.topp1 td:first-child { color: var(--yellow-d); font-weight: 800; }
   .tur-navn { font-size: 1.3rem; }
   .gjettepanel { gap: 9px; }
   .gjettepanel.klebrig { padding: 14px; }
-  .kr-felt input { height: 58px; font-size: 1.7rem; }
-  .gjett-skjema .knapp { height: 58px; min-width: 96px; font-size: 1.15rem; }
+  .kr-felt input { height: 58px; font-size: 1.55rem; padding: 0 72px 0 12px; }
+  .kr-felt .kr { right: 46px; font-size: 1.05rem; }
+  .gjett-skjema { gap: 8px; }
+  .gjett-skjema .knapp { height: 58px; min-width: 0; padding: 8px 14px; font-size: 1.1rem; }
   .vilkar div { grid-template-columns: 6.2em minmax(0, 1fr); }
   .handlinger.to { grid-template-columns: 1fr; }
   .handlinger.to .knapp[data-act="en-til"] { order: 2; }
@@ -428,4 +434,24 @@ tr.topp1 td:first-child { color: var(--yellow-d); font-weight: 800; }
   .runde.fasitvisning .produkt-hode { order: 1; } .runde.fasitvisning .fasit { order: 2; }
   .runde.fasitvisning .resultatkort { order: 3; } .runde.fasitvisning .handlinger { order: 4; }
   .runde.fasitvisning .galleri { order: 5; } .runde.fasitvisning .vilkar-kort { order: 6; } .runde.fasitvisning .lenker { order: 7; }
+}
+
+/* ── Lav skjerm (telefon liggende) ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .topp { position: static; }
+  .gjettepanel.klebrig { position: static; box-shadow: var(--shadow); }
+  .runde .gjettepanel { order: 3; }
+  .spor figure { max-height: 70vh; }
+}
+/* ── Smale telefoner (iPhone SE 1. gen. o.l.): plass til sekssifrede priser, knapper som ikke sprenger bredden ── */
+@media (max-width: 374px) {
+  .kr-felt input { padding: 0 46px 0 10px; font-size: 1.4rem; }
+  .kr-felt .kr { display: none; }
+  .knapp.stor { padding: 10px 16px; font-size: 1.25rem; white-space: normal; }
+  .stepper button { width: 44px; height: 44px; }
+  .stepper output { min-width: 44px; }
+  .kort-topp { flex-wrap: wrap; }
+}
+@media (max-width: 359px) {
+  .logo-tekst { display: none; }
 }

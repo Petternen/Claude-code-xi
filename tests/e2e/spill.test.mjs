@@ -135,12 +135,77 @@ test('bare valgte kategorier brukes, tomme kategorier vises ikke', async () => {
   await leggTil(page, 'Kari');
   await page.click('[data-act=start]');
   assert.equal((await tilstand(page)).runder[0].prod.kategori, 'kaffetraktere');
-  // Kategorien har én vare: «én runde til» gir beskjed i stedet for å gjenta varen
+  // Kategorien har én vare: ingen «én runde til», men en forklaring
   await gjettAlle(page, 900);
   await page.click('#hoved');
   await page.waitForSelector('.fasit');
-  await page.click('[data-act=en-til]');
-  assert.match(await page.textContent('#toast'), /Fant ingen flere varer/);
+  assert.equal(await page.locator('[data-act=en-til]').count(), 0);
+  assert.match(await page.textContent('.handlinger'), /Ingen flere varer i de valgte kategoriene/);
+});
+
+test('varene tar slutt: rundene begrenses og spillet ender i resultatet (ikke låst)', async () => {
+  // 3 varer i kategoriene, 5 runder ønsket
+  const page = await newPage(base, { storage: { kategorier: ['kaffetraktere', 'hodetelefoner'], antall: 5 } });
+  await leggTil(page, 'Kari', 'Ola');
+  await page.click('[data-act=start]');
+  assert.equal((await tilstand(page)).antall, 3);
+  for (let i = 1; i <= 3; i++) {
+    await page.waitForSelector('#gjett-inp');
+    assert.match(await page.textContent('#topp-midt'), new RegExp(`Runde ${i}\\s*av 3`));
+    await gjettAlle(page, 1000, 2000);
+    await page.click('#hoved');
+    await page.waitForSelector('.fasit');
+    assert.equal(await page.getAttribute('#hoved', 'data-act'), i < 3 ? 'neste' : 'ferdig');
+    await page.click('#hoved');
+  }
+  await page.waitForSelector('.seier');
+  assert.equal(await page.locator('[data-act=en-til]').count(), 0, 'ingen «én runde til» når varene er brukt opp');
+  assert.equal((await tilstand(page)).ferdig, true);
+  assert.deepEqual(page.errors, []);
+});
+
+test('nettleserens Tilbake etter «én runde til» viser runden som pågår, uten å hoppe over en', async () => {
+  const page = await newPage(base);
+  await leggTil(page, 'Kari', 'Ola');
+  await page.click('[data-act=start]');
+  await gjettAlle(page, 1000, 2000);
+  await page.click('#hoved'); await page.waitForSelector('.fasit');
+  await page.click('#hoved'); await page.waitForSelector('.seier');
+  await page.click('[data-act=en-til]'); await page.waitForSelector('#gjett-inp');
+  await page.goBack();
+  await page.waitForSelector('#gjett-inp');
+  assert.equal(new URL(page.url()).hash, '#/spill');
+  assert.equal(await page.locator('.seier').count(), 0);
+  const s = await tilstand(page);
+  assert.equal(s.runder.length, 2);
+  assert.match(await page.textContent('#topp-midt'), /Runde 2\s*av 2/);
+});
+
+test('nettbrett som snus beholder det som er skrevet i gjettefeltet', async () => {
+  const page = await newPage(base, { viewport: { width: 820, height: 1180 } });
+  await leggTil(page, 'Kari', 'Ola');
+  await page.click('[data-act=start]');
+  await page.fill('#gjett-inp', '4999');
+  await page.setViewportSize({ width: 1180, height: 820 });
+  await page.waitForTimeout(200);
+  assert.equal(await page.inputValue('#gjett-inp'), '4999');
+});
+
+test('data fra datasettet settes inn trygt: escapes, og bare http(s)-lenker', async () => {
+  const data = structuredClone(DATA);
+  for (const p of data.produkter) {
+    p.hentet = '<img src=x onerror="window.__xss=1">';
+    p.tilbud.leveringsdager = { min: '<img src=x onerror="window.__xss=2">', max: 3 };
+    p.tilbud.url = "javascript:window.__xss=3";
+  }
+  const page = await newPage(base, { data });
+  await leggTil(page, 'Kari');
+  await page.click('[data-act=start]');
+  await page.waitForSelector('#gjett-inp');
+  await gjettAlle(page, 900);
+  await page.click('#hoved'); await page.waitForSelector('.fasit');
+  assert.equal(await page.locator('a[href^="javascript:" i]').count(), 0);
+  assert.equal(await page.evaluate(() => window.__xss ?? null), null);
 });
 
 test('fast spiller huskes, gjest kan ikke ta en fast spillers navn', async () => {

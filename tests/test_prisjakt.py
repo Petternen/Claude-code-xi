@@ -57,8 +57,19 @@ class Navn(unittest.TestCase):
             ("Sony WH-1000XM5 - Black Friday", "Sony WH-1000XM5"),
             ("Samsung Galaxy S24 Ultra 256GB", "Samsung Galaxy S24 Ultra 256GB"),
             ('Dell 27" skjerm 4K 1 299,-', 'Dell 27" skjerm 4K'),
+            ("Moccamaster KBG Select - 1 999,- fri frakt", "Moccamaster KBG Select"),
+            ("Dyson V15 Detect - nå kun 7 990,- (før 9 990,-)", "Dyson V15 Detect"),
+            ("Airfryer XXL | Kun 1499,- hos oss", "Airfryer XXL"),
+            ("Airfryer XXL - nå kr 1 499", "Airfryer XXL"),
+            ("Bosch Serie 8 - kr. 12 990", "Bosch Serie 8"),
+            ("Airfryer XXL kr 1 499,-", "Airfryer XXL"),
         ]:
             self.assertEqual(prisjakt._uten_pris(inn), ut)
+
+    def test_tall_som_er_del_av_navnet_beholdes(self):
+        for navn in ["Philips Series 3000 - 2 kraftnivåer", "Garmin Forerunner 265 - 46mm", 'Samsung 55" TV',
+                     "Bosch kr 5 serie", "LEGO Technic 42115 - 3696 deler"]:
+            self.assertEqual(prisjakt._uten_pris(navn), navn)
 
     def test_ferdig_rydder_ogsaa_tilbudsnavn(self):
         res = {"navn": "TrÃ¥dlÃ¸s hodetelefon - Tilbud", "tilbud": {"tilbudsnavn": "Hodetelefon - fra 999 kr"}}

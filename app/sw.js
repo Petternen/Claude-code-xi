@@ -1,6 +1,6 @@
 // Offline-støtte: appen vises fra lager med en gang og oppdateres i bakgrunnen.
 // Prislisten hentes alltid fra nett først, så prisene er ferske når det finnes dekning.
-const CACHE = 'prisgjett-v2';
+const CACHE = 'prisgjett-v3';
 const BILDER = 'prisgjett-bilder';
 const MAKS_BILDER = 48; // nettlesere regner bilder fra andre domener som store, så hold antallet nede
 const SKALL = [
@@ -22,16 +22,16 @@ async function nettForst(req) {
   const cache = await caches.open(CACHE);
   try {
     const res = await fetch(req, { cache: 'no-cache' });
-    if (res.ok) cache.put(req, res.clone());
-    return res;
+    if (res.ok) { cache.put(req, res.clone()); return res; }
+    return (await cache.match(req, { ignoreSearch: true })) || res;
   } catch {
     return (await cache.match(req, { ignoreSearch: true })) || Response.error();
   }
 }
 
-async function lagerForst(req, navn, maks) {
+async function lagerForst(req, navn, maks, ignorerSok = false) {
   const cache = await caches.open(navn);
-  const hit = await cache.match(req, { ignoreSearch: navn === CACHE });
+  const hit = await cache.match(req, { ignoreSearch: ignorerSok });
   const nett = fetch(req).then(async res => {
     if (res && (res.ok || res.type === 'opaque')) {
       await cache.put(req, res.clone());
@@ -47,7 +47,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin === location.origin) {
-    e.respondWith(url.pathname.endsWith('/data/produkter.json') ? nettForst(req) : lagerForst(req, CACHE));
+    e.respondWith(url.pathname.endsWith('/data/produkter.json') ? nettForst(req) : lagerForst(req, CACHE, 0, true));
   } else if (/(^|\.)pji\.nu$/.test(url.hostname)) {
     e.respondWith(lagerForst(req, BILDER, MAKS_BILDER));
   } else if (/fonts\.(googleapis|gstatic)\.com$|fontshare\.com$/.test(url.hostname)) {

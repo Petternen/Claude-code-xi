@@ -1,7 +1,7 @@
 // Temaer fra Hallmark: velgeren, at valget huskes, og at hvert tema er lesbart (kontrast) og uten sidelengs scroll.
 import { test, before, after, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { startServer, closeBrowser, closeContexts, newPage, leggTil, gjettAlle, noHScroll, devices } from './helpers.mjs';
+import { startServer, closeBrowser, closeContexts, newPage, leggTil, gjettAlle, noHScroll, inView, rolig, devices } from './helpers.mjs';
 
 let srv, base;
 before(async () => { srv = await startServer(); base = srv.url; });
@@ -109,3 +109,64 @@ for (const t of TEMAER) {
     assert.deepEqual(page.errors, []);
   });
 }
+
+// Smaleste telefon (iPhone SE 1. gen., 320 px): ingenting stikker ut, og hele beløpet synes i gjettefeltet
+for (const t of ['stjerne', ...TEMAER]) {
+  test(`tema ${t} på 320 px: ingen sidelengs scroll, sekssifret beløp synes helt`, async () => {
+    const page = await newPage(base, { device: devices['iPhone SE'], storage: { tema: t } });
+    await rolig(page);
+    assert.ok(await noHScroll(page), 'oppsett');
+    await leggTil(page, 'Kari', 'Ola');
+    await rolig(page);
+    assert.ok(await noHScroll(page), 'oppsett med spillere');
+    await page.click('[data-act=start]');
+    await page.waitForSelector('#gjett-inp');
+    await rolig(page);
+    assert.ok(await noHScroll(page), 'gjetting');
+    for (const vis of [false, true]) {
+      if (vis) await page.click('[data-act=vis-tall]');
+      await page.fill('#gjett-inp', '129990');
+      const { sw, cw } = await page.$eval('#gjett-inp', e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+      assert.ok(sw <= cw, `${vis ? 'synlige' : 'skjulte'} tall kuttes: ${sw} > ${cw}`);
+    }
+    for (const sel of ['[data-act=tema]', '#gjett-inp', '.gjett-skjema .knapp']) assert.ok(await inView(page, sel), `${sel} innenfor skjermen`);
+    assert.deepEqual(page.errors, []);
+  });
+}
+
+test('tastaturfokus synes tydelig i alle temaer (kontrast minst 3:1 mot bakgrunnen)', async () => {
+  const page = await newPage(base, { viewport: { width: 1280, height: 800 } });
+  await leggTil(page, 'Kari');
+  const svake = [];
+  for (const t of ['stjerne', ...TEMAER]) {
+    await page.evaluate(id => window.TEMAER.bruk(id), t);
+    await page.evaluate(() => { document.activeElement?.blur(); scrollTo(0, 0); });
+    let sjekket = 0;
+    // Knapper og lenker får fokusramme (tekstfelt viser fokus med kantfarge og skrivemerke)
+    for (let i = 0; i < 14 && sjekket < 8; i++) {
+      await page.keyboard.press('Tab');
+      const f = await page.evaluate(() => {
+        const e = document.activeElement;
+        if (!/^(A|BUTTON|SUMMARY)$/.test(e.tagName)) return null;
+        const cv = document.createElement('canvas'); cv.width = cv.height = 1; const x = cv.getContext('2d', { willReadFrequently: true });
+        const rgba = c => { x.clearRect(0, 0, 1, 1); x.fillStyle = '#000'; x.fillStyle = c; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+        const lum = ([r, g, b]) => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+        let bg = null;   // bakgrunnen rammen tegnes på: nærmeste ensfargede forelder
+        for (let p = e.parentElement; p; p = p.parentElement) {
+          const cs = getComputedStyle(p), c = rgba(cs.backgroundColor);
+          if (c[3] > 0.6) { bg = c; break; }
+          if (cs.backgroundImage !== 'none' && !/url\(/.test(cs.backgroundImage)) break;   // gradient: hoppes over
+        }
+        const cs = getComputedStyle(e), fg = rgba(cs.outlineColor);
+        const k = bg ? (Math.max(lum(fg), lum(bg)) + 0.05) / (Math.min(lum(fg), lum(bg)) + 0.05) : null;
+        return { navn: (e.getAttribute('aria-label') || e.textContent).trim().slice(0, 25), stil: cs.outlineStyle, bredde: parseFloat(cs.outlineWidth), k };
+      });
+      if (!f) continue;
+      sjekket++;
+      if (f.stil !== 'solid' || f.bredde < 2) svake.push(`${t} «${f.navn}»: ingen ramme (${f.stil} ${f.bredde}px)`);
+      else if (f.k !== null && f.k < 3) svake.push(`${t} «${f.navn}»: kontrast ${f.k.toFixed(2)}`);
+    }
+    assert.ok(sjekket >= 4, `${t}: for få fokusstopp`);
+  }
+  assert.deepEqual(svake, []);
+});

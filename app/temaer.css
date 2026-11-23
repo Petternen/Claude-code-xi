@@ -45,7 +45,7 @@
   --gull-knapp: var(--c-okseblod); --gull-tekst: var(--c-papir); --gull-skygge: 4px 4px 0 var(--c-blekk);
   --stolpe: var(--c-okseblod); --stolpe-vinner: var(--c-blekk);
   --toast-bg: var(--c-blekk); --toast-tekst: var(--c-papir);
-  --fokus: 0 0 0 4px var(--c-okseblod); --melding-bg: var(--c-papir-2); --fane-skygge: 3px 3px 0 var(--c-blekk);
+  --fokus: 0 0 0 4px var(--c-okseblod); --fokus-farge: var(--c-okseblod); --melding-bg: var(--c-papir-2); --fane-skygge: 3px 3px 0 var(--c-blekk);
 }
 [data-tema="carnival"] :is(.knapp, .ikonknapp, .stepper button, .pil, .forstorr, .chip, .fasit .pris, .faner button) { border: 2px solid var(--c-blekk); }
 [data-tema="carnival"] .chip[aria-pressed="true"] { background: var(--c-blekk); color: var(--c-papir); }
@@ -92,7 +92,7 @@
   --gull-skygge: 0 5px 0 oklch(56% 0.19 25), 2px 9px 10px -3px oklch(20% 0.014 255 / 0.3);
   --stolpe: var(--h-blaa); --stolpe-vinner: var(--h-mint-dyp);
   --toast-bg: var(--h-blekk); --toast-tekst: var(--h-kartong);
-  --fokus: 0 0 0 4px var(--h-blaa); --melding-bg: var(--h-papir-2);
+  --fokus: 0 0 0 4px var(--h-blaa); --fokus-farge: var(--h-blaa); --melding-bg: var(--h-papir-2);
 }
 [data-tema="hum"] .knapp { background: var(--h-korn), var(--primary); }
 [data-tema="hum"] .knapp.hvit { background: var(--h-korn), var(--h-kartong); color: var(--h-blekk); }
@@ -133,7 +133,7 @@
   --gull-knapp: var(--u-fiolett); --gull-tekst: var(--u-lys); --gull-skygge: none;
   --stolpe: var(--u-fiolett-myk); --stolpe-vinner: var(--u-fiolett);
   --toast-bg: var(--u-blekk); --toast-tekst: var(--u-lys);
-  --fokus: 0 0 0 4px var(--u-fiolett); --melding-bg: var(--u-papir-2); --fane-skygge: none;
+  --fokus: 0 0 0 4px var(--u-fiolett); --fokus-farge: var(--u-fiolett-dyp); --melding-bg: var(--u-papir-2); --fane-skygge: none;
 }
 [data-tema="ultraviolet"] :is(.knapp, .chip, .lenke, .faner button, .tur-teller, .kategori-merke, .stepper output) { text-transform: lowercase; }
 [data-tema="ultraviolet"] .knapp.hvit { background: transparent; color: var(--u-blekk); box-shadow: inset 0 0 0 1.5px var(--u-blekk); }
@@ -176,7 +176,7 @@
   --gull-knapp: var(--r-rosa); --gull-tekst: var(--r-dypblaa); --gull-skygge: none;
   --stolpe: var(--r-blaa); --stolpe-vinner: var(--r-rosa);
   --toast-bg: var(--r-blaa); --toast-tekst: var(--r-papir);
-  --fokus: 0 0 0 4px oklch(44% 0.2 265); --melding-bg: var(--r-rosa-raster); --fane-skygge: none;
+  --fokus: 0 0 0 4px oklch(44% 0.2 265); --fokus-farge: oklch(44% 0.2 265); --melding-bg: var(--r-rosa-raster); --fane-skygge: none;
 }
 [data-tema="riso"] .knapp.hvit { background: transparent; color: var(--r-blaa); box-shadow: inset 0 0 0 1.5px var(--r-blaa); }
 [data-tema="riso"] .chip[aria-pressed="true"] { box-shadow: none; }
@@ -221,7 +221,7 @@
   --gull-knapp: var(--s-fersken); --gull-tekst: var(--s-fersken-blekk); --gull-skygge: none;
   --stolpe: var(--s-fersken); --stolpe-vinner: var(--s-gul);
   --toast-bg: var(--s-kort); --toast-tekst: var(--s-kort-blekk);
-  --fokus: 0 0 0 4px var(--s-gul); --melding-bg: var(--s-gronn-dyp); --fane-skygge: inset 0 0 0 3px var(--s-fersken);
+  --fokus: 0 0 0 4px var(--s-gul); --fokus-farge: var(--s-gul); --melding-bg: var(--s-gronn-dyp); --fane-skygge: inset 0 0 0 3px var(--s-fersken);
 }
 [data-tema="squeeze"] .knapp:hover:not(.hvit) { background: var(--s-fersken-2); }
 [data-tema="squeeze"] .knapp.hvit { background: transparent; color: var(--s-hvit); box-shadow: inset 0 0 0 2px var(--s-hvit); }
