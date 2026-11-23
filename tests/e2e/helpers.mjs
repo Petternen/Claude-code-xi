@@ -47,7 +47,7 @@ export async function newPage(base, { viewport = { width: 1024, height: 768 }, d
   const b = await getBrowser();
   const ctx = await b.newContext(device ? { ...device } : { viewport, hasTouch: true });
   openContexts.add(ctx);
-  await ctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
+  await ctx.route(/fonts\.(googleapis|gstatic)\.com|fontshare\.com/, r => r.abort());
   await ctx.route(/pji\.nu/, r => r.fulfill({ status: 200, contentType: 'image/png', body: BILDE }));
   if (!ekteData) await ctx.route(/\/data\/produkter\.json/, r => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data || DATA) }));
   if (storage) {

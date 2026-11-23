@@ -701,6 +701,9 @@
     },
     'lukk-lysboks': () => $('#lysboks').close(),
     'lukk-ios-hint': el => { lager.sett('ios-hint-lukket', true); el.closest('.melding').remove(); },
+    tema: () => visTemavelger(),
+    'lukk-tema': () => $('#temavelger').close(),
+    'velg-tema': el => { velgTema(el.dataset.id); $('#temavelger').close(); },
   };
 
   // Gjengi på nytt uten å miste rulleposisjon og åpne kategorigrupper
@@ -735,12 +738,46 @@
     if (e.target.id === 'gjett-inp') { const f = $('#gjett-feil'); if (f) f.hidden = true; }
   });
 
+  // ---------- Temaer (Hallmark) ----------
+  function visTemavelger() {
+    const T = window.TEMAER;
+    if (!T) return;
+    T.lastAlleFonter();
+    const naa = T.hent();
+    $('#temaliste').innerHTML = T.LISTE.map(t => `<button class="temavalg" role="radio" aria-checked="${t.id === naa}" tabindex="${t.id === naa ? 0 : -1}" data-act="velg-tema" data-id="${t.id}">
+        <span class="tema-prov" data-tema="${t.id}" aria-hidden="true">
+          <span class="tema-prov-tittel">Gjett prisen!</span>
+          <span class="tema-prov-rad"><span class="tema-prov-knapp">Lås inn</span><span class="tema-prov-pris">1 299 kr</span></span>
+          <span class="tema-prov-kort"></span>
+        </span>
+        <span class="tema-navn">${esc(t.navn)}</span><span class="tema-beskr">${esc(t.beskr)}</span>
+      </button>`).join('');
+    const d = $('#temavelger');
+    if (!d.open) d.showModal();
+    $('#temaliste [aria-checked="true"]')?.focus();
+  }
+  function velgTema(id) {
+    window.TEMAER?.bruk(id, true);
+    $$('#temaliste .temavalg').forEach(b => { const v = b.dataset.id === id; b.setAttribute('aria-checked', v); b.tabIndex = v ? 0 : -1; });
+  }
+
   // ---------- Tastatur ----------
   document.addEventListener('keydown', e => {
     if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
     if ($('#lysboks').open) {
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { $('#lysboks [data-galleri]')?._bla(e.key === 'ArrowLeft' ? -1 : 1); e.preventDefault(); }
       return; // Esc lukker dialogen av seg selv
+    }
+    if ($('#temavelger').open) {
+      // Piltaster bytter tema med en gang (forhåndsvisning bak dialogen), Enter/Esc lukker
+      const valg = $$('#temaliste .temavalg');
+      const i = valg.findIndex(b => b.getAttribute('aria-checked') === 'true');
+      const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (d && valg.length) {
+        const ny = valg[(i + d + valg.length) % valg.length];
+        velgTema(ny.dataset.id); ny.focus(); e.preventDefault();
+      }
+      return;
     }
     if (e.target.matches('input, textarea, select')) {
       if (e.key === 'Escape') e.target.blur();
@@ -757,6 +794,7 @@
     if (e.key === 'n' || e.key === 'N') { $('#ny-spiller')?.focus(); e.preventDefault(); return; }
     if (e.key === 'f' || e.key === 'F') { $('[data-act="fortsett"]')?.click(); return; }
     if (e.key === 't' || e.key === 'T') { gaa('statistikk'); return; }
+    if (e.key === 'u' || e.key === 'U') { visTemavelger(); e.preventDefault(); return; }
     if (e.key === 'Escape') {
       const h = location.hash;
       if (h.includes('statistikk') || h.includes('resultat')) history.length > 1 ? history.back() : gaa('');

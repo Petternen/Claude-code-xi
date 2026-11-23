@@ -1,10 +1,10 @@
 // Offline-støtte: appen vises fra lager med en gang og oppdateres i bakgrunnen.
 // Prislisten hentes alltid fra nett først, så prisene er ferske når det finnes dekning.
-const CACHE = 'prisgjett-v1';
+const CACHE = 'prisgjett-v2';
 const BILDER = 'prisgjett-bilder';
 const MAKS_BILDER = 48; // nettlesere regner bilder fra andre domener som store, så hold antallet nede
 const SKALL = [
-  './', 'index.html', 'app.css', 'app.js', 'fx.js', 'manifest.webmanifest', 'data/produkter.json',
+  './', 'index.html', 'app.css', 'temaer.css', 'app.js', 'temaer.js', 'fx.js', 'manifest.webmanifest', 'data/produkter.json',
   'ikoner/ikon.svg', 'ikoner/ikon-192.png', 'ikoner/ikon-512.png', 'ikoner/apple-touch-icon.png',
 ];
 
@@ -50,7 +50,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(url.pathname.endsWith('/data/produkter.json') ? nettForst(req) : lagerForst(req, CACHE));
   } else if (/(^|\.)pji\.nu$/.test(url.hostname)) {
     e.respondWith(lagerForst(req, BILDER, MAKS_BILDER));
-  } else if (/fonts\.(googleapis|gstatic)\.com$/.test(url.hostname)) {
+  } else if (/fonts\.(googleapis|gstatic)\.com$|fontshare\.com$/.test(url.hostname)) {
     e.respondWith(lagerForst(req, CACHE));
   }
 });
